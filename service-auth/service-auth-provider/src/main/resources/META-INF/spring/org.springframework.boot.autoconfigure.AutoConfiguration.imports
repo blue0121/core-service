@@ -1,0 +1,2 @@
+io.jutil.coreservice.auth.config.ScanAutoConfiguration
+io.jutil.coreservice.auth.config.TokenAutoConfiguration

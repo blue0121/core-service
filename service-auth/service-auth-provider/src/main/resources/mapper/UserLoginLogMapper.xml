@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.jutil.coreservice.auth.dao.UserLoginLogMapper">
+
+	<select id="selectOne" resultMap="userLoginLogMap">
+		SELECT l.*, u.code user_code, u.name user_name
+		FROM auth_user_login_log l
+		LEFT JOIN auth_user u ON l.user_id=u.id
+		WHERE l.id=#{id}
+	</select>
+
+	<resultMap id="userLoginLogMap" type="io.jutil.coreservice.auth.entity.UserLoginLog">
+		<id property="id" column="id" />
+		<result property="userId" column="user_id" />
+		<result property="ip" column="ip" />
+		<result property="loginDate" column="login_date" />
+		<result property="loginCount" column="login_count" />
+		<result property="firstLoginTime" column="first_login_time" />
+		<result property="lastLoginTime" column="last_login_time" />
+		<result property="userCode" column="user_code" />
+		<result property="userName" column="user_name" />
+	</resultMap>
+
+</mapper>

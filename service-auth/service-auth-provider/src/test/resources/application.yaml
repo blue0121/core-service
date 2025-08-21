@@ -1,0 +1,15 @@
+
+springeasy:
+  node:
+    machineId: 1
+  web:
+    dict-scan-packages:
+      - io.jutil.coreservice.core.dict
+      - io.jutil.coreservice.auth.dict
+
+app:
+  token:
+    expire-in: 30m
+    public-key-expire-in: 1h
+    public-key-path: classpath:/key/ed25519.pub
+    private-key-path: classpath:/key/ed25519.key
