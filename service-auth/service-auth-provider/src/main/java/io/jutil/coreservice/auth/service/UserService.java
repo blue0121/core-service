@@ -1,7 +1,9 @@
 package io.jutil.coreservice.auth.service;
 
 import io.jutil.coreservice.auth.entity.User;
+import io.jutil.coreservice.auth.entity.UserSearch;
 import io.jutil.coreservice.auth.repository.UserRepository;
+import io.jutil.springeasy.core.collection.Page;
 import io.jutil.springeasy.core.security.PasswordUtil;
 import io.jutil.springeasy.spring.exception.BaseErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +61,9 @@ public class UserService {
 
 	public int deleteList(Collection<Long> idList) {
 		return userRepository.deleteList(idList);
+	}
+
+	public Page search(UserSearch search, Page page) {
+		return userRepository.search(search, page);
 	}
 }

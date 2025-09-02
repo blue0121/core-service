@@ -1,8 +1,13 @@
 package io.jutil.coreservice.auth.provider;
 
+import io.jutil.coreservice.auth.entity.PageTest;
+import io.jutil.coreservice.auth.entity.SearchRequestTest;
 import io.jutil.coreservice.auth.entity.User;
 import io.jutil.coreservice.auth.entity.UserTest;
+import io.jutil.coreservice.auth.model.UserResponse;
+import io.jutil.coreservice.auth.model.UserSearchRequest;
 import io.jutil.coreservice.auth.service.UserService;
+import io.jutil.springeasy.core.collection.Sort;
 import io.jutil.springeasy.core.util.DateUtil;
 import io.jutil.springeasy.core.util.StringUtil;
 import io.jutil.springeasy.spring.exception.ErrorCodeException;
@@ -261,76 +266,72 @@ class UserProviderTest {
 
 	@Test
 	void testUpdateOne3() {
-		var request = UserTest.createRequest();
-		Assertions.assertThrows(ErrorCodeException.class, () -> provider.updateOne(request));
-	}
-
-	@Test
-	void testUpdateOne4() {
 		var r1 = UserTest.createRequest();
+		r1.setPassword(null);
 		r1.setId(0L);
 		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r1));
 
 		var r2 = UserTest.createRequest();
+		r2.setPassword(null);
 		r2.setId(-1L);
 		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r2));
 	}
 
 	@Test
+	void testUpdateOne4() {
+		var r1 = UserTest.createRequest();
+		r1.setPassword(null);
+		r1.setCode(StringUtil.repeat("1", 51, ""));
+		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r1));
+	}
+
+	@Test
 	void testUpdateOne5() {
 		var r1 = UserTest.createRequest();
-		r1.setRealm(null);
+		r1.setPassword(null);
+		r1.setName(StringUtil.repeat("1", 51, ""));
 		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r1));
 	}
 
 	@Test
 	void testUpdateOne6() {
 		var r1 = UserTest.createRequest();
-		r1.setCode(null);
-		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r1));
-
-		var r2 = UserTest.createRequest();
-		r2.setCode("");
-		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r2));
-
-		var r3 = UserTest.createRequest();
-		r3.setCode(StringUtil.repeat("1", 51, ""));
-		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r3));
-	}
-
-	@Test
-	void testUpdateOne7() {
-		var r1 = UserTest.createRequest();
-		r1.setName(null);
-		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r1));
-
-		var r2 = UserTest.createRequest();
-		r2.setName("");
-		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r2));
-
-		var r3 = UserTest.createRequest();
-		r3.setName(StringUtil.repeat("1", 51, ""));
-		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r3));
-	}
-
-	@Test
-	void testUpdateOne8() {
-		var r1 = UserTest.createRequest();
-		r1.setStatus(null);
-		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r1));
-	}
-
-	@Test
-	void testUpdateOne9() {
-		var r1 = UserTest.createRequest();
+		r1.setPassword(null);
 		r1.setRemarks(StringUtil.repeat("1", 501, ""));
 		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r1));
 	}
 
 	@Test
-	void testUpdateOne10() {
+	void testUpdateOne7() {
 		var r1 = UserTest.createRequest();
+		r1.setPassword(null);
 		r1.setExtension(StringUtil.repeat("1", 501, "").getBytes());
 		Assertions.assertThrows(ValidationException.class, () -> provider.updateOne(r1));
+	}
+
+	@Test
+	void testSearch() {
+		var request = new UserSearchRequest();
+		SearchRequestTest.setPage(request, "id", Sort.Direction.DESC);
+
+		var page = PageTest.createPage();
+		page.setTotal(1);
+		var now = DateUtil.now();
+		var entity = UserTest.create(now);
+		page.setContents(List.of(entity));
+		Mockito.when(service.search(Mockito.any(), Mockito.any())).thenReturn(page);
+		var response = provider.search(request);
+		PageTest.verify(response, 1, 10, 1, 1);
+		List<UserResponse> view = response.getContents();
+		Assertions.assertEquals(1, view.size());
+		UserTest.verify(view.getFirst(), entity.getId(),1, "code", "name", 0,
+				"remarks", "extension", "ip", now, now, now);
+	}
+
+	@Test
+	void testSearch1() {
+		var request = new UserSearchRequest();
+		SearchRequestTest.setPage(request, "abc", Sort.Direction.DESC);
+		Assertions.assertThrows(ValidationException.class, () -> provider.search(request));
 	}
 }

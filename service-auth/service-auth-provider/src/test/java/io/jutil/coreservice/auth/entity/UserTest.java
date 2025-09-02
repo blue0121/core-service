@@ -77,4 +77,16 @@ public class UserTest {
 		Assertions.assertEquals(createTime, response.getCreateTime());
 		Assertions.assertEquals(updateTime, response.getUpdateTime());
 	}
+
+	public static void verify(UserResponse response, long id, int realm, String code,
+	                          String name, int status, String remarks, String extension) {
+		Assertions.assertNotNull(response);
+		Assertions.assertEquals(id, response.getId());
+		Assertions.assertEquals(realm, response.getRealm().getCode());
+		Assertions.assertEquals(code, response.getCode());
+		Assertions.assertEquals(name, response.getName());
+		Assertions.assertEquals(status, response.getStatus().getCode());
+		Assertions.assertEquals(remarks, response.getRemarks());
+		Assertions.assertEquals(extension, new String(response.getExtension()));
+	}
 }

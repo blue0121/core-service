@@ -8,9 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 2025-08-18
  */
 @SpringBootTest(classes = BaseTest.Application.class)
-public abstract class BaseTest {
+public interface BaseTest {
 
 	@SpringBootApplication
-	public static class Application {
+	class Application {
 	}
 }

@@ -55,7 +55,12 @@ public class TokenService {
 
 	public Token refresh(String token) {
 		var session = UserSession.createAndVerify(publicKey, token);
-		return this.sign(session);
+		var t = this.sign(session);
+		var user = userRepository.getOne(session.getId());
+		if (user != null) {
+			t.setName(user.getName());
+		}
+		return t;
 	}
 
 	private Token sign(UserSession session) {

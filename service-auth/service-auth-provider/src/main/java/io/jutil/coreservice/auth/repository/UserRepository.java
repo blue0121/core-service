@@ -4,6 +4,10 @@ import io.jutil.coreservice.auth.dao.UserLoginLogMapper;
 import io.jutil.coreservice.auth.dao.UserMapper;
 import io.jutil.coreservice.auth.entity.User;
 import io.jutil.coreservice.auth.entity.UserLoginLog;
+import io.jutil.coreservice.auth.entity.UserSearch;
+import io.jutil.coreservice.core.entity.Pageable;
+import io.jutil.springeasy.core.collection.Page;
+import io.jutil.springeasy.core.collection.Sort;
 import io.jutil.springeasy.core.util.DateUtil;
 import io.jutil.springeasy.mybatis.id.LongIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jin Zheng
@@ -20,6 +25,11 @@ import java.util.List;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class UserRepository {
+	public static final Map<String, String> SORT_FILED_MAP =
+			Map.of("id", "e.id",
+					"createTime", "e.create_time",
+					"updateTime", "e.update_time");
+
 	@Autowired
 	UserMapper userMapper;
 
@@ -77,5 +87,20 @@ public class UserRepository {
 
 	public int deleteList(Collection<Long> idList) {
 		return userMapper.deleteList(idList);
+	}
+
+	public Page search(UserSearch search, Page page) {
+		var count = userMapper.countPage(search);
+		if (count == 0) {
+			return page;
+		}
+		page.setTotal(count);
+		page.setSortIfAbsent(() -> new Sort("id"));
+		var pageable = Pageable.from(page);
+		pageable.generateOrderBy(SORT_FILED_MAP);
+
+		var list = userMapper.listPage(search, pageable);
+		page.setContents(list);
+		return page;
 	}
 }

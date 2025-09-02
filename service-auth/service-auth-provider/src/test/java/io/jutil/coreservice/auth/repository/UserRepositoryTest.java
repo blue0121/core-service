@@ -3,8 +3,10 @@ package io.jutil.coreservice.auth.repository;
 import io.jutil.coreservice.auth.dao.UserLoginLogMapper;
 import io.jutil.coreservice.auth.dao.UserMapper;
 import io.jutil.coreservice.auth.dict.Realm;
+import io.jutil.coreservice.auth.entity.PageTest;
 import io.jutil.coreservice.auth.entity.User;
 import io.jutil.coreservice.auth.entity.UserLoginLog;
+import io.jutil.coreservice.auth.entity.UserSearch;
 import io.jutil.coreservice.auth.entity.UserTest;
 import io.jutil.springeasy.core.util.DateUtil;
 import org.junit.jupiter.api.Assertions;
@@ -127,5 +129,29 @@ class UserRepositoryTest {
 		Mockito.when(mapper.deleteList(Mockito.anyList())).thenReturn(1);
 		var view = repository.deleteList(List.of(1L));
 		Assertions.assertSame(1, view);
+	}
+
+	@Test
+	void testSearch() {
+		var search = new UserSearch();
+		var page = PageTest.createPage();
+		var entity = UserTest.create(DateUtil.now());
+		Mockito.when(mapper.countPage(Mockito.any())).thenReturn(1);
+		Mockito.when(mapper.listPage(Mockito.any(), Mockito.any())).thenReturn(List.of(entity));
+		var view = repository.search(search, page);
+		List<User> list = view.getContents();
+		Assertions.assertEquals(1, list.size());
+		Assertions.assertSame(entity, list.getFirst());
+	}
+
+	@Test
+	void testSearch1() {
+		var search = new UserSearch();
+		var page = PageTest.createPage();
+		Mockito.when(mapper.countPage(Mockito.any())).thenReturn(0);
+		var view = repository.search(search, page);
+		List<User> list = view.getContents();
+		Assertions.assertNull(list);
+		Mockito.verify(mapper, Mockito.never()).listPage(Mockito.any(), Mockito.any());
 	}
 }

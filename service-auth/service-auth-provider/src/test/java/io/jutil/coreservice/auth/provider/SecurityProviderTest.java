@@ -16,7 +16,7 @@ import java.util.Base64;
  * @author Jin Zheng
  * @since 2025-08-20
  */
-class SecurityProviderTest extends BaseTest {
+class SecurityProviderTest implements BaseTest {
 	@Autowired
 	SecurityProvider provider;
 

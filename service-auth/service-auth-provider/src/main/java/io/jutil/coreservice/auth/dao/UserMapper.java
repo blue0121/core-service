@@ -2,6 +2,8 @@ package io.jutil.coreservice.auth.dao;
 
 import io.jutil.coreservice.auth.dict.Realm;
 import io.jutil.coreservice.auth.entity.User;
+import io.jutil.coreservice.auth.entity.UserSearch;
+import io.jutil.coreservice.core.entity.Pageable;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,5 +32,10 @@ public interface UserMapper {
 	User login(@Param("realm") Realm realm,
 	           @Param("code") String code,
 	           @Param("password") String password);
+
+	int countPage(@Param("search") UserSearch search);
+
+	List<User> listPage(@Param("search") UserSearch search,
+	                    @Param("pageable") Pageable pageable);
 
 }

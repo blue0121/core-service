@@ -47,6 +47,43 @@
 		WHERE status=0 AND realm=#{realm} AND code=#{code} AND password=#{password}
 	</select>
 
+	<select id="countPage" resultType="_int">
+		SELECT COUNT(*) FROM auth_user e
+		<where>
+			<include refid="pageCond" />
+		</where>
+	</select>
+
+	<sql id="pageCond">
+		<if test="search.realm != null">
+			AND e.realm = #{search.realm}
+		</if>
+		<if test="search.status != null">
+			AND e.status = #{search.status}
+		</if>
+		<if test="search.code != null and !search.code.isEmpty()">
+			AND e.code LIKE CONCAT('%', #{search.code}, '%')
+		</if>
+		<if test="search.name != null and !search.name.isEmpty()">
+			AND e.name LIKE CONCAT('%', #{search.name}, '%')
+		</if>
+		<if test="search.idList != null and !search.idList.isEmpty()">
+			AND
+			<foreach collection="search.idList" item="item" open="e.id in (" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</sql>
+
+	<select id="listPage" resultMap="userMap">
+		SELECT e.* FROM auth_user e
+		<where>
+			<include refid="pageCond" />
+		</where>
+		${pageable.orderBy}
+		LIMIT #{pageable.size} OFFSET #{pageable.offset}
+	</select>
+
 	<resultMap id="userMap" type="io.jutil.coreservice.auth.entity.User">
 		<id property="id" column="id" />
 		<result property="realm" column="realm" />

@@ -1,4 +1,4 @@
-package io.jutil.coreservice.auth.entity;
+package io.jutil.coreservice.auth.model;
 
 import io.jutil.coreservice.core.dict.Status;
 import lombok.Getter;
@@ -10,21 +10,20 @@ import java.time.LocalDateTime;
 
 /**
  * @author Jin Zheng
- * @since 2025-08-19
+ * @since 2023-11-30
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserLoginLog {
+public class UserLoginLogResponse {
 	private Long id;
 	private Long userId;
+	private String userCode;
+	private String userName;
+	private Status userStatus;
 	private String ip;
 	private LocalDate loginDate;
 	private int loginCount;
 	private LocalDateTime firstLoginTime;
 	private LocalDateTime lastLoginTime;
-
-	private String userCode;
-	private String userName;
-	private Status userStatus;
 }

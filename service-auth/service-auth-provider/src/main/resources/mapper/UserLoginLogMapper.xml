@@ -3,10 +3,40 @@
 <mapper namespace="io.jutil.coreservice.auth.dao.UserLoginLogMapper">
 
 	<select id="selectOne" resultMap="userLoginLogMap">
-		SELECT l.*, u.code user_code, u.name user_name
+		SELECT l.*, u.code user_code, u.name user_name, u.status user_status
 		FROM auth_user_login_log l
 		LEFT JOIN auth_user u ON l.user_id=u.id
 		WHERE l.id=#{id}
+	</select>
+
+	<select id="countPage" resultType="_int">
+		SELECT COUNT(*) FROM auth_user_login_log e
+		<where>
+			<include refid="pageCond" />
+		</where>
+	</select>
+
+	<sql id="pageCond">
+		<if test="search.userId > 0">
+			AND e.user_id = #{search.userId}
+		</if>
+		<if test="search.startDate != null">
+			AND e.login_date &gt;= #{search.startDate}
+		</if>
+		<if test="search.endDate != null">
+			AND e.login_date &lt; #{search.endDate}
+		</if>
+	</sql>
+
+	<select id="listPage" resultMap="userLoginLogMap">
+		SELECT e.*, u.code user_code, u.name user_name, u.status user_status
+		FROM auth_user_login_log e
+		INNER JOIN auth_user u ON u.id = e.user_id
+		<where>
+			<include refid="pageCond" />
+		</where>
+		${pageable.orderBy}
+		LIMIT #{pageable.size} OFFSET #{pageable.offset}
 	</select>
 
 	<resultMap id="userLoginLogMap" type="io.jutil.coreservice.auth.entity.UserLoginLog">
@@ -19,6 +49,7 @@
 		<result property="lastLoginTime" column="last_login_time" />
 		<result property="userCode" column="user_code" />
 		<result property="userName" column="user_name" />
+		<result property="userStatus" column="user_status" />
 	</resultMap>
 
 </mapper>

@@ -4,7 +4,9 @@ import io.jutil.coreservice.auth.convertor.UserConvertor;
 import io.jutil.coreservice.auth.facade.UserFacade;
 import io.jutil.coreservice.auth.model.UserRequest;
 import io.jutil.coreservice.auth.model.UserResponse;
+import io.jutil.coreservice.auth.model.UserSearchRequest;
 import io.jutil.coreservice.auth.service.UserService;
+import io.jutil.coreservice.core.model.PageResponse;
 import io.jutil.coreservice.core.util.AssertUtil;
 import io.jutil.springeasy.core.validation.ValidationUtil;
 import io.jutil.springeasy.core.validation.group.AddOperation;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +25,8 @@ import java.util.Map;
  */
 @Component
 public class UserProvider implements UserFacade {
+	public static final List<String> SORT_FIELD_LIST = List.of("id", "createTime", "updateTime");
+
 	@Autowired
 	UserService userService;
 
@@ -73,5 +78,15 @@ public class UserProvider implements UserFacade {
 	public int deleteList(Collection<Long> idList) {
 		AssertUtil.validIdList(idList, "ID列表");
 		return userService.deleteList(idList);
+	}
+
+	@Override
+	public PageResponse search(UserSearchRequest request) {
+		ValidationUtil.valid(request);
+		var search = UserConvertor.toSearch(request);
+		var page = request.toPage();
+		page.check(SORT_FIELD_LIST);
+		page = userService.search(search, page);
+		return UserConvertor.toPageResponse(page);
 	}
 }

@@ -1,6 +1,8 @@
 package io.jutil.coreservice.auth.service;
 
+import io.jutil.coreservice.auth.entity.PageTest;
 import io.jutil.coreservice.auth.entity.User;
+import io.jutil.coreservice.auth.entity.UserSearch;
 import io.jutil.coreservice.auth.entity.UserTest;
 import io.jutil.coreservice.auth.repository.UserRepository;
 import io.jutil.springeasy.core.security.PasswordUtil;
@@ -107,5 +109,14 @@ class UserServiceTest {
 		Mockito.when(repository.deleteList(Mockito.anyList())).thenReturn(1);
 		var view = service.deleteList(List.of(1L));
 		Assertions.assertSame(1, view);
+	}
+
+	@Test
+	void testSearch() {
+		var search = new UserSearch();
+		var page = PageTest.createPage();
+		Mockito.when(repository.search(Mockito.any(), Mockito.any())).thenReturn(page);
+		var view = service.search(search, page);
+		Assertions.assertSame(page, view);
 	}
 }

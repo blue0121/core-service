@@ -23,14 +23,14 @@ public class UserRequest {
 	@Min(value = 1L, groups = {UpdateOperation.class}, message = "ID不能为空")
 	private long id;
 
-	@NotNull(groups = {AddOperation.class, UpdateOperation.class}, message = "域不能为空")
+	@NotNull(groups = {AddOperation.class}, message = "域不能为空")
 	private Realm realm;
 
-	@NotEmpty(groups = {AddOperation.class, UpdateOperation.class}, message = "标识不能为空")
+	@NotEmpty(groups = {AddOperation.class}, message = "标识不能为空")
 	@Size(max = 50, groups = {AddOperation.class, UpdateOperation.class}, message = "标识最大长度50")
 	private String code;
 
-	@NotEmpty(groups = {AddOperation.class, UpdateOperation.class}, message = "名称不能为空")
+	@NotEmpty(groups = {AddOperation.class}, message = "名称不能为空")
 	@Size(max = 50, groups = {AddOperation.class, UpdateOperation.class}, message = "名称最大长度50")
 	private String name;
 
@@ -38,7 +38,7 @@ public class UserRequest {
 	private String password;
 	private String oldPassword;
 
-	@NotNull(groups = {AddOperation.class, UpdateOperation.class}, message = "状态不能为空")
+	@NotNull(groups = {AddOperation.class}, message = "状态不能为空")
 	private Status status;
 
 	@Size(max = 500, groups = {AddOperation.class, UpdateOperation.class}, message = "备注最大长度500")

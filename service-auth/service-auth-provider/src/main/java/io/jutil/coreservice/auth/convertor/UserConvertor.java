@@ -1,8 +1,10 @@
 package io.jutil.coreservice.auth.convertor;
 
 import io.jutil.coreservice.auth.entity.User;
+import io.jutil.coreservice.auth.entity.UserSearch;
 import io.jutil.coreservice.auth.model.UserRequest;
 import io.jutil.coreservice.auth.model.UserResponse;
+import io.jutil.coreservice.auth.model.UserSearchRequest;
 import io.jutil.coreservice.core.model.PageResponse;
 import io.jutil.springeasy.core.collection.Page;
 
@@ -17,6 +19,21 @@ import java.util.Map;
  */
 public class UserConvertor {
 	private UserConvertor() {
+	}
+
+	public static UserSearch toSearch(UserSearchRequest request) {
+		var filter = request.getFilter();
+		var search = new UserSearch();
+		if (filter == null) {
+			return search;
+		}
+
+		search.setRealm(filter.getRealm());
+		search.setStatus(filter.getStatus());
+		search.setCode(filter.getCode());
+		search.setName(filter.getName());
+		search.setIdList(filter.getIdList());
+		return search;
 	}
 
 	public static User toEntity(UserRequest request) {

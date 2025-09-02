@@ -1,29 +1,42 @@
 package io.jutil.coreservice.auth.dao;
 
 import io.jutil.coreservice.auth.dict.Realm;
+import io.jutil.coreservice.auth.entity.PageTest;
 import io.jutil.coreservice.auth.entity.User;
+import io.jutil.coreservice.auth.entity.UserSearch;
 import io.jutil.coreservice.auth.entity.UserTest;
 import io.jutil.coreservice.core.dict.Status;
+import io.jutil.springeasy.core.collection.Sort;
 import io.jutil.springeasy.core.util.DateUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jin Zheng
  * @since 2025-08-18
  */
-class UserMapperTest {
-	final UserMapper mapper;
-	final JdbcTemplate jdbcTemplate;
+public abstract class UserMapperTest {
+	@Autowired
+	UserMapper mapper;
 
-	UserMapperTest(UserMapper mapper, JdbcTemplate jdbcTemplate) {
-		this.mapper = mapper;
-		this.jdbcTemplate = jdbcTemplate;
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
+	@BeforeEach
+	void beforeEach() {
+		jdbcTemplate.update("TRUNCATE TABLE auth_user");
 	}
 
-	void testInsertOne() {
+	@Test
+	public void testInsertOne() {
 		var loginTime = DateUtil.now();
 		var entity = UserTest.create(loginTime);
 		entity.setId(1L);
@@ -34,7 +47,7 @@ class UserMapperTest {
 
 		Assertions.assertEquals(1, this.count());
 
-		var realm = jdbcTemplate.queryForObject("select realm from auth_user where id = ?",
+		var realm = jdbcTemplate.queryForObject("SELECT realm FROM auth_user WHERE id = ?",
 				Integer.class, 1L);
 		System.out.println(">>>>>>> realm = " + realm);
 
@@ -43,7 +56,8 @@ class UserMapperTest {
 				0, "remarks", "extension", "ip", loginTime);
 	}
 
-	void testUpdateOne1() {
+	@Test
+	public void testUpdateOne1() {
 		var loginTime = DateUtil.now();
 		var entity = UserTest.create(loginTime);
 		Assertions.assertEquals(1, mapper.insertOne(entity));
@@ -69,7 +83,8 @@ class UserMapperTest {
 				1, "remarks2", "extension2", "ip2", loginTime2);
 	}
 
-	void testUpdateOne2() {
+	@Test
+	public void testUpdateOne2() {
 		var loginTime = DateUtil.now();
 		var entity = UserTest.create(loginTime);
 		Assertions.assertEquals(1, mapper.insertOne(entity));
@@ -88,7 +103,8 @@ class UserMapperTest {
 				0, "remarks", "extension", "ip", loginTime);
 	}
 
-	void testDeleteOne() {
+	@Test
+	public void testDeleteOne() {
 		var loginTime = DateUtil.now();
 		var entity = UserTest.create(loginTime);
 		Assertions.assertEquals(1, mapper.insertOne(entity));
@@ -100,7 +116,8 @@ class UserMapperTest {
 		Assertions.assertEquals(0, this.count());
 	}
 
-	void testDeleteList() {
+	@Test
+	public void testDeleteList() {
 		var loginTime = DateUtil.now();
 		var entity1 = UserTest.create(loginTime);
 		Assertions.assertEquals(1, mapper.insertOne(entity1));
@@ -116,7 +133,8 @@ class UserMapperTest {
 		Assertions.assertEquals(0, this.count());
 	}
 
-	void testSelectList() {
+	@Test
+	public void testSelectList() {
 		var loginTime = DateUtil.now();
 		var entity1 = UserTest.create(loginTime);
 		Assertions.assertEquals(1, mapper.insertOne(entity1));
@@ -138,7 +156,8 @@ class UserMapperTest {
 		}
 	}
 
-	void testLogin() {
+	@Test
+	public void testLogin() {
 		var loginTime = DateUtil.now();
 		var entity = UserTest.create(loginTime);
 		Assertions.assertEquals(1, mapper.insertOne(entity));
@@ -148,7 +167,56 @@ class UserMapperTest {
 				0, "remarks", "extension", "ip", loginTime);
 	}
 
-	int count() {
+	@CsvSource({"realm", "status", "code", "name", "idList"})
+	@ParameterizedTest
+	public void testCountPage(String type) {
+		var entity = UserTest.create(DateUtil.now());
+		Assertions.assertEquals(1, mapper.insertOne(entity));
+
+		var search = this.getSearch(type, entity);
+		var count = mapper.countPage(search);
+		Assertions.assertEquals(1, count);
+	}
+
+	private UserSearch getSearch(String type, User entity) {
+		var search = new UserSearch();
+		switch (type) {
+			case "realm":
+				search.setRealm(entity.getRealm());
+				break;
+			case "status":
+				search.setStatus(entity.getStatus());
+				break;
+			case "code":
+				search.setCode(entity.getCode());
+				break;
+			case "name":
+				search.setName(entity.getName());
+				break;
+			case "idList":
+				search.setIdList(List.of(entity.getId()));
+				break;
+		}
+		return search;
+	}
+
+	@CsvSource({"realm", "status", "code", "name", "idList"})
+	@ParameterizedTest
+	public void testListPage(String type) {
+		var loginTime = DateUtil.now();
+		var entity = UserTest.create(loginTime);
+		Assertions.assertEquals(1, mapper.insertOne(entity));
+
+		var search = this.getSearch(type, entity);
+		var pageable = PageTest.createPageable(0, 10, new Sort("id"),
+				Map.of("id", "e.id"));
+		var list = mapper.listPage(search, pageable);
+		Assertions.assertEquals(1, list.size());
+		UserTest.verify(list.getFirst(), 1, "code", "name", "password",
+				0, "remarks", "extension", "ip", loginTime);
+	}
+
+	private int count() {
 		var sql = "SELECT COUNT(*) FROM auth_user";
 		return jdbcTemplate.queryForObject(sql, Integer.class);
 	}
