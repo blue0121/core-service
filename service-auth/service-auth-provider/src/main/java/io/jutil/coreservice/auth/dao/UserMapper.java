@@ -1,8 +1,8 @@
 package io.jutil.coreservice.auth.dao;
 
-import io.jutil.coreservice.auth.dict.Realm;
 import io.jutil.coreservice.auth.entity.User;
 import io.jutil.coreservice.auth.entity.UserSearch;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.coreservice.core.entity.Pageable;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -17,17 +17,21 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-	User selectOne(@Param("id") long id);
+	User selectOne(@Param("realm") Realm realm,
+	               @Param("id") long id);
 
-	List<User> selectList(@Param("idList") Collection<Long> idList);
+	List<User> selectList(@Param("realm") Realm realm,
+	                      @Param("idList") Collection<Long> idList);
 
 	int insertOne(@Param("entity") User entity);
 
 	int updateOne(@Param("entity") User entity);
 
-	int deleteOne(@Param("id") long id);
+	int deleteOne(@Param("realm") Realm realm,
+	              @Param("id") long id);
 
-	int deleteList(@Param("idList") Collection<Long> idList);
+	int deleteList(@Param("realm") Realm realm,
+	               @Param("idList") Collection<Long> idList);
 
 	User login(@Param("realm") Realm realm,
 	           @Param("code") String code,

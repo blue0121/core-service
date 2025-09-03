@@ -3,9 +3,10 @@
 <mapper namespace="io.jutil.coreservice.auth.dao.UserLoginLogMapper">
 
 	<insert id="insertOrUpdate">
-		INSERT INTO auth_user_login_log (id, user_id, ip, login_date, login_count,
+		INSERT INTO auth_user_login_log (id, realm, user_id, ip, login_date, login_count,
 			first_login_time, last_login_time)
-		VALUES (#{entity.id}, #{entity.userId}, #{entity.ip}, CURRENT_DATE, 1, now(), now())
+		VALUES (#{entity.id}, #{entity.realm}, #{entity.userId}, #{entity.ip}, CURRENT_DATE,
+			1, now(), now())
 		ON DUPLICATE KEY UPDATE last_login_time=now(), ip=VALUES(ip),
 			login_count=login_count+1
 	</insert>

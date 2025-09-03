@@ -2,12 +2,12 @@ package io.jutil.coreservice.auth.repository;
 
 import io.jutil.coreservice.auth.dao.UserLoginLogMapper;
 import io.jutil.coreservice.auth.dao.UserMapper;
-import io.jutil.coreservice.auth.dict.Realm;
 import io.jutil.coreservice.auth.entity.PageTest;
 import io.jutil.coreservice.auth.entity.User;
 import io.jutil.coreservice.auth.entity.UserLoginLog;
 import io.jutil.coreservice.auth.entity.UserSearch;
 import io.jutil.coreservice.auth.entity.UserTest;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.springeasy.core.util.DateUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -77,7 +77,7 @@ class UserRepositoryTest {
 	void testAddOne() {
 		var user = UserTest.create(DateUtil.now());
 		Mockito.when(mapper.insertOne(Mockito.any())).thenReturn(1);
-		Mockito.when(mapper.selectOne(Mockito.anyLong())).thenReturn(user);
+		Mockito.when(mapper.selectOne(Mockito.any(), Mockito.anyLong())).thenReturn(user);
 		var view = repository.addOne(user);
 		Assertions.assertSame(user, view);
 	}
@@ -88,13 +88,13 @@ class UserRepositoryTest {
 		Mockito.when(mapper.insertOne(Mockito.any())).thenReturn(0);
 		var view = repository.addOne(user);
 		Assertions.assertNull(view);
-		Mockito.verify(mapper, Mockito.never()).selectOne(Mockito.anyLong());
+		Mockito.verify(mapper, Mockito.never()).selectOne(Mockito.any(), Mockito.anyLong());
 	}
 
 	@Test
 	void testUpdateOne() {
 		var user = UserTest.create(DateUtil.now());
-		Mockito.when(mapper.selectOne(Mockito.anyLong())).thenReturn(user);
+		Mockito.when(mapper.selectOne(Mockito.any(), Mockito.anyLong())).thenReturn(user);
 		var view = repository.updateOne(user);
 		Assertions.assertSame(user, view);
 		Mockito.verify(mapper).updateOne(Mockito.same(user));
@@ -103,31 +103,31 @@ class UserRepositoryTest {
 	@Test
 	void testGetOne() {
 		var user = UserTest.create(DateUtil.now());
-		Mockito.when(mapper.selectOne(Mockito.anyLong())).thenReturn(user);
-		var view = repository.getOne(1L);
+		Mockito.when(mapper.selectOne(Mockito.any(), Mockito.anyLong())).thenReturn(user);
+		var view = repository.getOne(Realm.ADMIN, 1L);
 		Assertions.assertSame(user, view);
 	}
 
 	@Test
 	void testGetList() {
 		var user = UserTest.create(DateUtil.now());
-		Mockito.when(mapper.selectList(Mockito.anyList())).thenReturn(List.of(user));
-		var viewList = repository.getList(List.of(1L));
+		Mockito.when(mapper.selectList(Mockito.any(), Mockito.anyList())).thenReturn(List.of(user));
+		var viewList = repository.getList(Realm.ADMIN, List.of(1L));
 		Assertions.assertEquals(1, viewList.size());
 		Assertions.assertSame(user, viewList.getFirst());
 	}
 
 	@Test
 	void testDeleteOne() {
-		Mockito.when(mapper.deleteOne(Mockito.anyLong())).thenReturn(1);
-		var view = repository.deleteOne(1L);
+		Mockito.when(mapper.deleteOne(Mockito.any(), Mockito.anyLong())).thenReturn(1);
+		var view = repository.deleteOne(Realm.ADMIN, 1L);
 		Assertions.assertSame(1, view);
 	}
 
 	@Test
 	void testDeleteList() {
-		Mockito.when(mapper.deleteList(Mockito.anyList())).thenReturn(1);
-		var view = repository.deleteList(List.of(1L));
+		Mockito.when(mapper.deleteList(Mockito.any(), Mockito.anyList())).thenReturn(1);
+		var view = repository.deleteList(Realm.ADMIN, List.of(1L));
 		Assertions.assertSame(1, view);
 	}
 

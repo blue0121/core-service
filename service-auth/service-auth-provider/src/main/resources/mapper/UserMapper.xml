@@ -13,11 +13,11 @@
 		<if test="entity.remarks != null and entity.remarks != ''">remarks=#{entity.remarks},</if>
 		<if test="entity.loginTime != null">login_time=#{entity.loginTime},</if>
 			update_time=now()
-		WHERE id=#{entity.id}
+		WHERE id=#{entity.id} AND realm=#{entity.realm}
 	</update>
 
 	<delete id="deleteOne">
-		DELETE FROM auth_user WHERE id=#{id}
+		DELETE FROM auth_user WHERE id=#{id} AND realm=#{realm}
 	</delete>
 
 	<delete id="deleteList">
@@ -26,11 +26,12 @@
 			<foreach collection="idList" item="item" open="id in (" separator="," close=")">
 				#{item}
 			</foreach>
+			AND realm=#{realm}
 		</where>
 	</delete>
 
 	<select id="selectOne" resultMap="userMap">
-		SELECT * FROM auth_user WHERE id=#{id}
+		SELECT * FROM auth_user WHERE id=#{id} AND realm=#{realm}
 	</select>
 
 	<select id="selectList" resultMap="userMap">
@@ -39,6 +40,7 @@
 			<foreach collection="idList" item="item" open="id in (" separator="," close=")">
 				#{item}
 			</foreach>
+			AND realm=#{realm}
 		</where>
 	</select>
 

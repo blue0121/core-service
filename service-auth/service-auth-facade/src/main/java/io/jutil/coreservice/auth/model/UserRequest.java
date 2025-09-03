@@ -1,6 +1,6 @@
 package io.jutil.coreservice.auth.model;
 
-import io.jutil.coreservice.auth.dict.Realm;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.coreservice.core.dict.Status;
 import io.jutil.springeasy.core.validation.group.AddOperation;
 import io.jutil.springeasy.core.validation.group.UpdateOperation;
@@ -23,7 +23,7 @@ public class UserRequest {
 	@Min(value = 1L, groups = {UpdateOperation.class}, message = "ID不能为空")
 	private long id;
 
-	@NotNull(groups = {AddOperation.class}, message = "域不能为空")
+	@NotNull(groups = {AddOperation.class, UpdateOperation.class}, message = "域不能为空")
 	private Realm realm;
 
 	@NotEmpty(groups = {AddOperation.class}, message = "标识不能为空")

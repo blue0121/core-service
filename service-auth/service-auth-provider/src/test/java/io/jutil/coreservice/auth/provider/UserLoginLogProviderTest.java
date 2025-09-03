@@ -6,6 +6,7 @@ import io.jutil.coreservice.auth.entity.UserLoginLogTest;
 import io.jutil.coreservice.auth.model.UserLoginLogResponse;
 import io.jutil.coreservice.auth.model.UserLoginLogSearchRequest;
 import io.jutil.coreservice.auth.service.UserLoginLogService;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.springeasy.core.collection.Sort;
 import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.Assertions;
@@ -35,6 +36,7 @@ class UserLoginLogProviderTest {
 	@Test
 	void testSearch() {
 		var request = new UserLoginLogSearchRequest();
+		request.getFilter().setRealm(Realm.ADMIN);
 		SearchRequestTest.setPage(request, "id", Sort.Direction.DESC);
 
 		var page = PageTest.createPage();
@@ -47,13 +49,21 @@ class UserLoginLogProviderTest {
 		PageTest.verify(response, 1, 10, 1, 1);
 		List<UserLoginLogResponse> view = response.getContents();
 		Assertions.assertEquals(1, view.size());
-		UserLoginLogTest.verify(view.getFirst(), 1L, "ip", loginDate, 1,
+		UserLoginLogTest.verify(view.getFirst(), 1, 1L, "ip", loginDate, 1,
 				"code", "name", 0);
 	}
 
 	@Test
 	void testSearch1() {
 		var request = new UserLoginLogSearchRequest();
+		SearchRequestTest.setPage(request, "id", Sort.Direction.DESC);
+		Assertions.assertThrows(ValidationException.class, () -> provider.search(request));
+	}
+
+	@Test
+	void testSearch2() {
+		var request = new UserLoginLogSearchRequest();
+		request.getFilter().setRealm(Realm.ADMIN);
 		SearchRequestTest.setPage(request, "abc", Sort.Direction.DESC);
 		Assertions.assertThrows(ValidationException.class, () -> provider.search(request));
 	}

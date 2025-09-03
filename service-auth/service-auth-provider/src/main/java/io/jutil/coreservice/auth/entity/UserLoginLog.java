@@ -1,5 +1,6 @@
 package io.jutil.coreservice.auth.entity;
 
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.coreservice.core.dict.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserLoginLog {
 	private Long id;
+	private Realm realm;
 	private Long userId;
 	private String ip;
 	private LocalDate loginDate;

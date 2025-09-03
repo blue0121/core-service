@@ -46,6 +46,7 @@ public class TokenService {
 			throw BaseErrorCode.LOGIN_FAILURE.newException();
 		}
 		var session = new UserSession();
+		session.setRealm(loginUser.getRealm());
 		session.setId(loginUser.getId());
 		session.setExtension(loginUser.getExtension());
 		var token = this.sign(session);
@@ -56,7 +57,7 @@ public class TokenService {
 	public Token refresh(String token) {
 		var session = UserSession.createAndVerify(publicKey, token);
 		var t = this.sign(session);
-		var user = userRepository.getOne(session.getId());
+		var user = userRepository.getOne(session.getRealm(), session.getId());
 		if (user != null) {
 			t.setName(user.getName());
 		}

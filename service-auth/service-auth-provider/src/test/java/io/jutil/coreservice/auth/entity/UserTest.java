@@ -1,8 +1,8 @@
 package io.jutil.coreservice.auth.entity;
 
-import io.jutil.coreservice.auth.dict.Realm;
 import io.jutil.coreservice.auth.model.UserRequest;
 import io.jutil.coreservice.auth.model.UserResponse;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.coreservice.core.dict.Status;
 import io.jutil.springeasy.mybatis.id.LongIdGenerator;
 import org.junit.jupiter.api.Assertions;

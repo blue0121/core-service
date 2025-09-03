@@ -1,9 +1,15 @@
 package io.jutil.coreservice.core.model;
 
 import com.alibaba.fastjson2.JSONPath;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.springeasy.core.codec.json.Json;
 import io.jutil.springeasy.core.validation.ValidationUtil;
 import jakarta.validation.ValidationException;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,8 +73,8 @@ class SearchRequestTest {
 				sort.toOrderByString(Map.of("a", "a", "b", "b", "c", "c")));
 	}
 
-	@CsvSource({"$.page.index,0", "$.page.size,0", "$.page.size,101",
-			"$.sorts[0].direction,abc"})
+	@CsvSource({"$.filter.body,", "$.page.index,0", "$.page.size,0",
+			"$.page.size,101", "$.sorts[0].direction,abc"})
 	@ParameterizedTest
 	void testSearchRequest1(String path, String value) {
 		var json = """
@@ -98,8 +104,43 @@ class SearchRequestTest {
 
 	static class TestSearchRequest extends SearchRequest<TestSearchRequest.Body> {
 
-		public record Body(String body) {
+		public record Body(@NotEmpty(message = "内容不能为空") String body) {
 		}
 	}
 
+	@Test
+	void testRealmSearchRequest() {
+		var json = """
+				{
+					"filter": {
+					},
+					"page": {
+						"index": 1,
+						"size": 20
+					},
+					"sorts": [{
+						"field": "a",
+						"direction": "ASC"
+					}, {
+						"field": "b",
+						"direction": "DESC"
+					}, {
+						"field": "c"
+					}]
+				}""";
+		System.out.println(json);
+		var request = Json.fromString(json, RealmSearchRequest.class);
+		Assertions.assertThrows(ValidationException.class, () -> ValidationUtil.valid(request));
+	}
+
+	static class RealmSearchRequest extends SearchRequest<RealmSearchRequest.Body> {
+
+		@Getter
+		@Setter
+		@NoArgsConstructor
+		public static class Body {
+			@NotNull(message = "域不能为空")
+			private Realm realm;
+		}
+	}
 }

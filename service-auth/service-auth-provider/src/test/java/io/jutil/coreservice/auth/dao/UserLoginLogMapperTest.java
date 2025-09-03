@@ -47,7 +47,7 @@ public abstract class UserLoginLogMapperTest {
 		Assertions.assertEquals(1, mapper.insertOrUpdate(entity));
 
 		var view = mapper.selectOne(entity.getId());
-		UserLoginLogTest.verify(view, userEntity.getId(), "ip", LocalDate.now(),
+		UserLoginLogTest.verify(view, 1, userEntity.getId(), "ip", LocalDate.now(),
 				1, "code", "name", 0);
 	}
 
@@ -64,7 +64,7 @@ public abstract class UserLoginLogMapperTest {
 		mapper.insertOrUpdate(entity2);
 
 		var view = mapper.selectOne(entity1.getId());
-		UserLoginLogTest.verify(view, userEntity.getId(), "ip2", LocalDate.now(),
+		UserLoginLogTest.verify(view, 1, userEntity.getId(), "ip2", LocalDate.now(),
 				2, "code", "name", 0);
 	}
 
@@ -84,6 +84,7 @@ public abstract class UserLoginLogMapperTest {
 
 	private UserLoginLogSearch getSearch(String type, User entity) {
 		var search = new UserLoginLogSearch();
+		search.setRealm(entity.getRealm());
 		switch (type) {
 			case "userId":
 				search.setUserId(entity.getId());
@@ -112,7 +113,7 @@ public abstract class UserLoginLogMapperTest {
 				Map.of("loginDate", "e.login_date"));
 		var list = mapper.listPage(search, pageable);
 		Assertions.assertEquals(1, list.size());
-		UserLoginLogTest.verify(list.getFirst(), userEntity.getId(), "ip", LocalDate.now(),
-				1, "code", "name", 0);
+		UserLoginLogTest.verify(list.getFirst(), 1, userEntity.getId(), "ip",
+				LocalDate.now(), 1, "code", "name", 0);
 	}
 }

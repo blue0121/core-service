@@ -1,5 +1,6 @@
 package io.jutil.coreservice.core.model;
 
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.springeasy.core.security.KeyPair;
 import io.jutil.springeasy.core.security.TokenUtil;
 import org.junit.jupiter.api.Assertions;
@@ -35,6 +36,7 @@ class UserSessionTest {
 		var keyPair = generated ? keyPair1 : keyPair2;
 
 		var session = new UserSession();
+		session.setRealm(Realm.ADMIN);
 		session.setId(id);
 		session.setExpireTime(expireTime);
 		var token = session.createToken(keyPair.getPrivate());
@@ -43,6 +45,7 @@ class UserSessionTest {
 
 		var view = UserSession.createAndVerify(keyPair.getPublic(), token);
 		Assertions.assertNotNull(view);
+		Assertions.assertEquals(Realm.ADMIN, view.getRealm());
 		Assertions.assertEquals(id, view.getId());
 		Assertions.assertNull(view.getExtension());
 	}
@@ -53,6 +56,7 @@ class UserSessionTest {
 		var keyPair = generated ? keyPair1 : keyPair2;
 
 		var session = new UserSession();
+		session.setRealm(Realm.ADMIN);
 		session.setId(id);
 		session.setExpireTime(expireTime);
 		session.setExtension(text.getBytes(StandardCharsets.UTF_8));
@@ -62,6 +66,7 @@ class UserSessionTest {
 
 		var view = UserSession.createAndVerify(keyPair.getPublic(), token);
 		Assertions.assertNotNull(view);
+		Assertions.assertEquals(Realm.ADMIN, view.getRealm());
 		Assertions.assertEquals(id, view.getId());
 		var extension = view.getExtension();
 		Assertions.assertNotNull(extension);

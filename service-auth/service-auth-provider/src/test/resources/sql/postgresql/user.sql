@@ -31,6 +31,7 @@ CREATE UNIQUE INDEX udx_auth_user_code_realm ON auth_user (code, realm);
 
 CREATE TABLE auth_user_login_log (
 	id                   INT8                        PRIMARY KEY,
+	realm                INT2                        NOT NULL,
 	user_id              INT8                        NOT NULL,
 	ip                   VARCHAR(50),
 	login_date           DATE                        NOT NULL,
@@ -40,6 +41,7 @@ CREATE TABLE auth_user_login_log (
 );
 COMMENT ON TABLE auth_user_login_log IS '用户';
 COMMENT ON COLUMN auth_user_login_log.id IS '雪花ID';
+COMMENT ON COLUMN auth_user_login_log.realm IS '域';
 COMMENT ON COLUMN auth_user_login_log.user_id IS '用户ID';
 COMMENT ON COLUMN auth_user_login_log.ip IS 'IP地址';
 COMMENT ON COLUMN auth_user_login_log.login_date IS '登录日期';

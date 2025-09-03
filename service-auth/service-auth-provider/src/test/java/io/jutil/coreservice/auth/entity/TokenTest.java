@@ -1,8 +1,8 @@
 package io.jutil.coreservice.auth.entity;
 
-import io.jutil.coreservice.auth.dict.Realm;
 import io.jutil.coreservice.auth.model.TokenRequest;
 import io.jutil.coreservice.auth.model.TokenResponse;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.springeasy.core.util.DateUtil;
 import org.junit.jupiter.api.Assertions;
 

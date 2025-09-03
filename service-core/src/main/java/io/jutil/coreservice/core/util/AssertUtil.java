@@ -31,4 +31,10 @@ public class AssertUtil {
 			throw new ValidationException(name + "不能为空");
 		}
 	}
+
+	public static void validNotNull(Object object, String name) {
+		if (object == null) {
+			throw new ValidationException(name + "不能为空");
+		}
+	}
 }

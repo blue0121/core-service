@@ -5,6 +5,7 @@ import io.jutil.coreservice.auth.dao.UserMapper;
 import io.jutil.coreservice.auth.entity.User;
 import io.jutil.coreservice.auth.entity.UserLoginLog;
 import io.jutil.coreservice.auth.entity.UserSearch;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.coreservice.core.entity.Pageable;
 import io.jutil.springeasy.core.collection.Page;
 import io.jutil.springeasy.core.collection.Sort;
@@ -46,12 +47,14 @@ public class UserRepository {
 
 		var updateUser = new User();
 		updateUser.setId(loginUser.getId());
+		updateUser.setRealm(entity.getRealm());
 		updateUser.setIp(loginUser.getIp());
 		updateUser.setLoginTime(loginUser.getLoginTime());
 		userMapper.updateOne(updateUser);
 
 		var userLoginLog = new UserLoginLog();
 		userLoginLog.setId(LongIdGenerator.nextId());
+		userLoginLog.setRealm(entity.getRealm());
 		userLoginLog.setUserId(loginUser.getId());
 		userLoginLog.setIp(loginUser.getIp());
 		userLoginLogMapper.insertOrUpdate(userLoginLog);
@@ -65,28 +68,28 @@ public class UserRepository {
 		if (count == 0) {
 			return null;
 		}
-		return this.getOne(entity.getId());
+		return this.getOne(entity.getRealm(), entity.getId());
 	}
 
 	public User updateOne(User entity) {
 		userMapper.updateOne(entity);
-		return this.getOne(entity.getId());
+		return this.getOne(entity.getRealm(), entity.getId());
 	}
 
-	public User getOne(long id) {
-		return userMapper.selectOne(id);
+	public User getOne(Realm realm, long id) {
+		return userMapper.selectOne(realm, id);
 	}
 
-	public List<User> getList(Collection<Long> idList) {
-		return userMapper.selectList(idList);
+	public List<User> getList(Realm realm, Collection<Long> idList) {
+		return userMapper.selectList(realm, idList);
 	}
 
-	public int deleteOne(long id) {
-		return userMapper.deleteOne(id);
+	public int deleteOne(Realm realm, long id) {
+		return userMapper.deleteOne(realm, id);
 	}
 
-	public int deleteList(Collection<Long> idList) {
-		return userMapper.deleteList(idList);
+	public int deleteList(Realm realm, Collection<Long> idList) {
+		return userMapper.deleteList(realm, idList);
 	}
 
 	public Page search(UserSearch search, Page page) {

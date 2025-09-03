@@ -1,10 +1,10 @@
 package io.jutil.coreservice.auth.dao;
 
-import io.jutil.coreservice.auth.dict.Realm;
 import io.jutil.coreservice.auth.entity.PageTest;
 import io.jutil.coreservice.auth.entity.User;
 import io.jutil.coreservice.auth.entity.UserSearch;
 import io.jutil.coreservice.auth.entity.UserTest;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.coreservice.core.dict.Status;
 import io.jutil.springeasy.core.collection.Sort;
 import io.jutil.springeasy.core.util.DateUtil;
@@ -47,11 +47,7 @@ public abstract class UserMapperTest {
 
 		Assertions.assertEquals(1, this.count());
 
-		var realm = jdbcTemplate.queryForObject("SELECT realm FROM auth_user WHERE id = ?",
-				Integer.class, 1L);
-		System.out.println(">>>>>>> realm = " + realm);
-
-		var view = mapper.selectOne(1L);
+		var view = mapper.selectOne(Realm.ADMIN, 1L);
 		UserTest.verify(view, 1, "code", "name", "password",
 				0, "remarks", "extension", "ip", loginTime);
 	}
@@ -65,7 +61,7 @@ public abstract class UserMapperTest {
 		var entity2 = new User();
 		var loginTime2 = loginTime.plusHours(1);
 		entity2.setId(entity.getId());
-		entity2.setRealm(Realm.USER);
+		entity2.setRealm(Realm.ADMIN);
 		entity2.setCode("code2");
 		entity2.setName("name2");
 		entity2.setPassword("password2");
@@ -78,7 +74,7 @@ public abstract class UserMapperTest {
 
 		Assertions.assertEquals(1, this.count());
 
-		var view = mapper.selectOne(entity.getId());
+		var view = mapper.selectOne(Realm.ADMIN, entity.getId());
 		UserTest.verify(view, 1, "code2", "name2", "password2",
 				1, "remarks2", "extension2", "ip2", loginTime2);
 	}
@@ -91,15 +87,35 @@ public abstract class UserMapperTest {
 
 		var entity2 = new User();
 		entity2.setId(entity.getId());
-		entity2.setRealm(Realm.USER);
+		entity2.setRealm(Realm.ADMIN);
 		entity2.setCode("code");
 		entity2.setPassword("password2");
 		Assertions.assertEquals(1, mapper.updateOne(entity2));
 
 		Assertions.assertEquals(1, this.count());
 
-		var view = mapper.selectOne(entity.getId());
+		var view = mapper.selectOne(Realm.ADMIN, entity.getId());
 		UserTest.verify(view, 1, "code", "name", "password2",
+				0, "remarks", "extension", "ip", loginTime);
+	}
+
+	@Test
+	public void testUpdateOne3() {
+		var loginTime = DateUtil.now();
+		var entity = UserTest.create(loginTime);
+		Assertions.assertEquals(1, mapper.insertOne(entity));
+
+		var entity2 = new User();
+		entity2.setId(entity.getId());
+		entity2.setRealm(Realm.USER);
+		entity2.setCode("code2");
+		entity2.setPassword("password2");
+		Assertions.assertEquals(0, mapper.updateOne(entity2));
+
+		Assertions.assertEquals(1, this.count());
+
+		var view = mapper.selectOne(Realm.ADMIN, entity.getId());
+		UserTest.verify(view, 1, "code", "name", "password",
 				0, "remarks", "extension", "ip", loginTime);
 	}
 
@@ -111,7 +127,7 @@ public abstract class UserMapperTest {
 
 		Assertions.assertEquals(1, this.count());
 
-		Assertions.assertEquals(1, mapper.deleteOne(entity.getId()));
+		Assertions.assertEquals(1, mapper.deleteOne(Realm.ADMIN, entity.getId()));
 
 		Assertions.assertEquals(0, this.count());
 	}
@@ -128,9 +144,10 @@ public abstract class UserMapperTest {
 
 		Assertions.assertEquals(2, this.count());
 
-		Assertions.assertEquals(2, mapper.deleteList(List.of(entity1.getId(), entity2.getId())));
+		Assertions.assertEquals(1, mapper.deleteList(Realm.ADMIN,
+				List.of(entity1.getId(), entity2.getId())));
 
-		Assertions.assertEquals(0, this.count());
+		Assertions.assertEquals(1, this.count());
 	}
 
 	@Test
@@ -143,17 +160,11 @@ public abstract class UserMapperTest {
 		entity2.setRealm(Realm.USER);
 		Assertions.assertEquals(1, mapper.insertOne(entity2));
 
-		var viewList = mapper.selectList(List.of(entity1.getId(), entity2.getId()));
-		Assertions.assertEquals(2, viewList.size());
-		for (var view : viewList) {
-			if (view.getRealm() == Realm.ADMIN) {
-				UserTest.verify(view, 1, "code", "name", "password",
-						0, "remarks", "extension", "ip", loginTime);
-			} else {
-				UserTest.verify(view, 2, "code", "name", "password",
-						0, "remarks", "extension", "ip", loginTime);
-			}
-		}
+		var viewList = mapper.selectList(Realm.ADMIN,
+				List.of(entity1.getId(), entity2.getId()));
+		Assertions.assertEquals(1, viewList.size());
+		UserTest.verify(viewList.getFirst(), 1, "code", "name", "password",
+				0, "remarks", "extension", "ip", loginTime);
 	}
 
 	@Test
@@ -180,6 +191,7 @@ public abstract class UserMapperTest {
 
 	private UserSearch getSearch(String type, User entity) {
 		var search = new UserSearch();
+		search.setRealm(entity.getRealm());
 		switch (type) {
 			case "realm":
 				search.setRealm(entity.getRealm());

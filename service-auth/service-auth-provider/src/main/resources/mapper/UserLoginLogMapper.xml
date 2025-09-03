@@ -17,6 +17,9 @@
 	</select>
 
 	<sql id="pageCond">
+		<if test="search.realm != null">
+			AND e.realm = #{search.realm}
+		</if>
 		<if test="search.userId > 0">
 			AND e.user_id = #{search.userId}
 		</if>

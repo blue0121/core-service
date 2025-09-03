@@ -6,6 +6,7 @@ import io.jutil.springeasy.core.validation.annotation.EnumIn;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,14 +22,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public abstract class SearchRequest<T> {
-	private T filter;
+	@Valid @NotNull
+	protected T filter;
 
 	@Valid
-	private PageRequest page;
+	protected PageRequest page;
 
 	@Valid
-	private List<SortRequest> sorts;
-
+	protected List<SortRequest> sorts;
 
 	public Page toPage() {
 		Page page;

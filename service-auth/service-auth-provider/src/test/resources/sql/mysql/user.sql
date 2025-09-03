@@ -17,6 +17,7 @@ CREATE UNIQUE INDEX udx_code_realm ON auth_user (code, realm);
 
 CREATE TABLE auth_user_login_log (
 	id                   BIGINT                      PRIMARY KEY      COMMENT '雪花ID',
+	realm                TINYINT                     NOT NULL         COMMENT '域',
 	user_id              BIGINT                      NOT NULL         COMMENT '用户ID',
 	ip                   VARCHAR(50)                                  COMMENT 'IP地址',
 	login_date           DATE                        NOT NULL         COMMENT '登录日期',

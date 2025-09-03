@@ -5,6 +5,7 @@ import io.jutil.coreservice.auth.entity.User;
 import io.jutil.coreservice.auth.entity.UserSearch;
 import io.jutil.coreservice.auth.entity.UserTest;
 import io.jutil.coreservice.auth.repository.UserRepository;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.springeasy.core.security.PasswordUtil;
 import io.jutil.springeasy.core.util.DateUtil;
 import io.jutil.springeasy.spring.exception.ErrorCodeException;
@@ -34,16 +35,16 @@ class UserServiceTest {
 	@Test
 	void testGetOne() {
 		var user = UserTest.create(DateUtil.now());
-		Mockito.when(repository.getOne(Mockito.anyLong())).thenReturn(user);
-		var view = service.getOne(1L);
+		Mockito.when(repository.getOne(Mockito.any(), Mockito.anyLong())).thenReturn(user);
+		var view = service.getOne(Realm.ADMIN, 1L);
 		Assertions.assertSame(user, view);
 	}
 
 	@Test
 	void testGetList() {
 		var user = UserTest.create(DateUtil.now());
-		Mockito.when(repository.getList(Mockito.anyList())).thenReturn(List.of(user));
-		var viewMap = service.getList(List.of(1L));
+		Mockito.when(repository.getList(Mockito.any(), Mockito.anyList())).thenReturn(List.of(user));
+		var viewMap = service.getList(Realm.ADMIN, List.of(1L));
 		Assertions.assertEquals(1, viewMap.size());
 		Assertions.assertSame(user, viewMap.get(user.getId()));
 	}
@@ -65,7 +66,7 @@ class UserServiceTest {
 		var now = DateUtil.now();
 		var user = UserTest.create(now);
 		user.setPassword(PasswordUtil.encrypt(user.getPassword()));
-		Mockito.when(repository.getOne(Mockito.anyLong())).thenReturn(user);
+		Mockito.when(repository.getOne(Mockito.any(), Mockito.anyLong())).thenReturn(user);
 
 		var entity = UserTest.create(now);
 		entity.setOldPassword(entity.getPassword());
@@ -90,7 +91,7 @@ class UserServiceTest {
 		var now = DateUtil.now();
 		var user = UserTest.create(now);
 		user.setPassword(PasswordUtil.encrypt(user.getPassword()));
-		Mockito.when(repository.getOne(Mockito.anyLong())).thenReturn(user);
+		Mockito.when(repository.getOne(Mockito.any(), Mockito.anyLong())).thenReturn(user);
 
 		var entity = UserTest.create(now);
 		entity.setOldPassword("password1");
@@ -99,15 +100,15 @@ class UserServiceTest {
 
 	@Test
 	void testDeleteOne() {
-		Mockito.when(repository.deleteOne(Mockito.anyLong())).thenReturn(1);
-		var view = service.deleteOne(1L);
+		Mockito.when(repository.deleteOne(Mockito.any(), Mockito.anyLong())).thenReturn(1);
+		var view = service.deleteOne(Realm.ADMIN, 1L);
 		Assertions.assertSame(1, view);
 	}
 
 	@Test
 	void testDeleteList() {
-		Mockito.when(repository.deleteList(Mockito.anyList())).thenReturn(1);
-		var view = service.deleteList(List.of(1L));
+		Mockito.when(repository.deleteList(Mockito.any(), Mockito.anyList())).thenReturn(1);
+		var view = service.deleteList(Realm.ADMIN, List.of(1L));
 		Assertions.assertSame(1, view);
 	}
 

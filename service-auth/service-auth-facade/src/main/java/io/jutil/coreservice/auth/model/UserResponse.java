@@ -1,6 +1,6 @@
 package io.jutil.coreservice.auth.model;
 
-import io.jutil.coreservice.auth.dict.Realm;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.coreservice.core.dict.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

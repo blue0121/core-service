@@ -1,5 +1,6 @@
 package io.jutil.coreservice.core.model;
 
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.springeasy.core.codec.CodecFactory;
 import io.jutil.springeasy.core.codec.Decoder;
 import io.jutil.springeasy.core.codec.Encoder;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class UserSession implements ExternalSerializable {
+	private Realm realm;
 	private long id;
 	private LocalDateTime expireTime;
 	private byte[] extension;
@@ -53,6 +55,7 @@ public class UserSession implements ExternalSerializable {
 
 	@Override
 	public void encode(Encoder encoder) {
+		encoder.writeUInt(realm.getCode());
 		encoder.writeLong(id);
 		encoder.writeLocalDateTime(expireTime);
 		if (extension == null || extension.length == 0) {
@@ -65,6 +68,7 @@ public class UserSession implements ExternalSerializable {
 
 	@Override
 	public void decode(Decoder decoder) {
+		this.realm = Realm.from(decoder.readUInt());
 		this.id = decoder.readLong();
 		this.expireTime = decoder.readLocalDateTime();
 		int len = decoder.readInt();

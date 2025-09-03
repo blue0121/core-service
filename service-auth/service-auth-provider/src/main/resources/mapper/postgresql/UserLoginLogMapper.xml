@@ -3,9 +3,10 @@
 <mapper namespace="io.jutil.coreservice.auth.dao.UserLoginLogMapper">
 
 	<insert id="insertOrUpdate">
-		INSERT INTO auth_user_login_log (id, user_id, ip, login_date, login_count,
+		INSERT INTO auth_user_login_log (id, realm, user_id, ip, login_date, login_count,
 			first_login_time, last_login_time)
-		VALUES (#{entity.id}, #{entity.userId}, #{entity.ip}, CURRENT_DATE, 1, now(), now())
+		VALUES (#{entity.id}, #{entity.realm}, #{entity.userId}, #{entity.ip}, CURRENT_DATE,
+			1, now(), now())
 		ON CONFLICT (user_id, login_date) DO UPDATE SET last_login_time=now(),
 			ip=EXCLUDED.ip, login_count=auth_user_login_log.login_count+1
 	</insert>

@@ -1,6 +1,6 @@
 package io.jutil.coreservice.auth.model;
 
-import io.jutil.coreservice.auth.dict.Realm;
+import io.jutil.coreservice.core.dict.Realm;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

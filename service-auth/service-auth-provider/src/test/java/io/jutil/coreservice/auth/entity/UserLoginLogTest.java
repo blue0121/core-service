@@ -1,6 +1,7 @@
 package io.jutil.coreservice.auth.entity;
 
 import io.jutil.coreservice.auth.model.UserLoginLogResponse;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.coreservice.core.dict.Status;
 import io.jutil.springeasy.mybatis.id.LongIdGenerator;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +17,7 @@ public class UserLoginLogTest {
 	public static UserLoginLog create(long userId) {
 		var entity = new UserLoginLog();
 		entity.setId(LongIdGenerator.nextId());
+		entity.setRealm(Realm.ADMIN);
 		entity.setUserId(userId);
 		entity.setIp("ip");
 		return entity;
@@ -24,6 +26,7 @@ public class UserLoginLogTest {
 	public static UserLoginLog create(long userId, LocalDate loginDate) {
 		var entity = new UserLoginLog();
 		entity.setId(LongIdGenerator.nextId());
+		entity.setRealm(Realm.ADMIN);
 		entity.setUserId(userId);
 		entity.setIp("ip");
 		entity.setLoginDate(loginDate);
@@ -34,10 +37,11 @@ public class UserLoginLogTest {
 		return entity;
 	}
 
-	public static void verify(UserLoginLog entity, long userId, String ip,
-	                          LocalDate loginDate, int loginCount,
+	public static void verify(UserLoginLog entity, int realm, long userId,
+	                          String ip, LocalDate loginDate, int loginCount,
 	                          String userCode, String userName, int userStatus) {
 		Assertions.assertNotNull(entity);
+		Assertions.assertEquals(realm, entity.getRealm().getCode());
 		Assertions.assertEquals(userId, entity.getUserId());
 		Assertions.assertEquals(ip, entity.getIp());
 		Assertions.assertEquals(loginDate, entity.getLoginDate());
@@ -47,10 +51,11 @@ public class UserLoginLogTest {
 		Assertions.assertEquals(userStatus, entity.getUserStatus().getCode());
 	}
 
-	public static void verify(UserLoginLogResponse entity, long userId, String ip,
-	                          LocalDate loginDate, int loginCount,
+	public static void verify(UserLoginLogResponse entity, int realm, long userId,
+	                          String ip, LocalDate loginDate, int loginCount,
 	                          String userCode, String userName, int userStatus) {
 		Assertions.assertNotNull(entity);
+		Assertions.assertEquals(realm, entity.getRealm().getCode());
 		Assertions.assertEquals(userId, entity.getUserId());
 		Assertions.assertEquals(ip, entity.getIp());
 		Assertions.assertEquals(loginDate, entity.getLoginDate());

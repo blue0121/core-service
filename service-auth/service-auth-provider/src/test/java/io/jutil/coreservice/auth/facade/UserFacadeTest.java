@@ -11,6 +11,7 @@ import io.jutil.coreservice.auth.model.UserRequest;
 import io.jutil.coreservice.auth.model.UserResponse;
 import io.jutil.coreservice.auth.model.UserSearchRequest;
 import io.jutil.coreservice.auth.util.PublicKeyCache;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.springeasy.core.collection.Sort;
 import io.jutil.springeasy.core.security.TokenException;
 import io.jutil.springeasy.spring.exception.ErrorCodeException;
@@ -58,6 +59,7 @@ public abstract class UserFacadeTest {
 
 		var request = new UserRequest();
 		request.setId(response.getId());
+		request.setRealm(response.getRealm());
 		request.setName("test");
 
 		var view = userFacade.updateOne(request);
@@ -72,7 +74,7 @@ public abstract class UserFacadeTest {
 
 		this.searchUserAndVerify(2, 1);
 
-		var responseMap = userFacade.getList(List.of(response.getId(), response2.getId()));
+		var responseMap = userFacade.getList(Realm.ADMIN, List.of(response.getId(), response2.getId()));
 		var view1 = responseMap.get(response.getId());
 		UserTest.verify(view1, response.getId(), 1, "code",
 				"name", 0, "remarks", "extension");
@@ -86,7 +88,7 @@ public abstract class UserFacadeTest {
 	public void testDeleteUser() {
 		var response = this.createUserAndVerify();
 
-		Assertions.assertEquals(1, userFacade.deleteOne(response.getId()));
+		Assertions.assertEquals(1, userFacade.deleteOne(Realm.ADMIN, response.getId()));
 
 		this.searchUserAndVerify(0, 0);
 	}
@@ -96,7 +98,7 @@ public abstract class UserFacadeTest {
 		var response = this.createUserAndVerify();
 		var response2 = this.createUserAndVerify2();
 
-		Assertions.assertEquals(2, userFacade.deleteList(
+		Assertions.assertEquals(2, userFacade.deleteList(Realm.ADMIN,
 				List.of(response.getId(), response2.getId())));
 
 		this.searchUserAndVerify(0, 0);
@@ -129,14 +131,14 @@ public abstract class UserFacadeTest {
 
 		var logList = this.searchUserLoginLogAndVerify(1, 1);
 		Assertions.assertEquals(1, logList.size());
-		UserLoginLogTest.verify(logList.getFirst(), session.getId(), "ip",
+		UserLoginLogTest.verify(logList.getFirst(), 1, session.getId(), "ip",
 				LocalDate.now(), 1, "code", "name", 0);
 
 		tokenFacade.create(request);
 
 		logList = this.searchUserLoginLogAndVerify(1, 1);
 		Assertions.assertEquals(1, logList.size());
-		UserLoginLogTest.verify(logList.getFirst(), session.getId(), "ip",
+		UserLoginLogTest.verify(logList.getFirst(), 1, session.getId(), "ip",
 				LocalDate.now(), 2, "code", "name", 0);
 	}
 
@@ -179,7 +181,7 @@ public abstract class UserFacadeTest {
 	private UserResponse createUserAndVerify() {
 		var request = UserTest.createRequest();
 		var response = userFacade.addOne(request);
-		var view = userFacade.getOne(response.getId());
+		var view = userFacade.getOne(Realm.ADMIN, response.getId());
 
 		UserTest.verify(view, response.getId(), 1, "code",
 				"name", 0, "remarks", "extension");
@@ -192,7 +194,7 @@ public abstract class UserFacadeTest {
 		request.setName("name2");
 		request.setPassword("password2");
 		var response = userFacade.addOne(request);
-		var view = userFacade.getOne(response.getId());
+		var view = userFacade.getOne(Realm.ADMIN, response.getId());
 
 		UserTest.verify(view, response.getId(), 1, "code2",
 				"name2", 0, "remarks", "extension");
@@ -201,6 +203,7 @@ public abstract class UserFacadeTest {
 
 	private List<UserResponse> searchUserAndVerify(int total, int totalPage) {
 		var request = new UserSearchRequest();
+		request.getFilter().setRealm(Realm.ADMIN);
 		SearchRequestTest.setPage(request, "id", Sort.Direction.DESC);
 		var response = userFacade.search(request);
 		PageTest.verify(response, 1, 10, total, totalPage);
@@ -211,6 +214,7 @@ public abstract class UserFacadeTest {
 
 	private List<UserLoginLogResponse> searchUserLoginLogAndVerify(int total, int totalPage) {
 		var request = new UserLoginLogSearchRequest();
+		request.getFilter().setRealm(Realm.ADMIN);
 		SearchRequestTest.setPage(request, "id", Sort.Direction.DESC);
 		var response = userLoginLogFacade.search(request);
 		PageTest.verify(response, 1, 10, total, totalPage);

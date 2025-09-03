@@ -24,6 +24,7 @@ public class UserLoginLogConvertor {
 			return search;
 		}
 
+		search.setRealm(filter.getRealm());
 		search.setUserId(filter.getUserId());
 		search.setStartDate(filter.getStartDate());
 		search.setEndDate(filter.getEndDate());
@@ -36,6 +37,7 @@ public class UserLoginLogConvertor {
 		}
 		var response = new UserLoginLogResponse();
 		response.setId(entity.getId());
+		response.setRealm(entity.getRealm());
 		response.setUserId(entity.getUserId());
 		response.setIp(entity.getIp());
 		response.setLoginDate(entity.getLoginDate());

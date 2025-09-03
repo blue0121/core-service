@@ -1,4 +1,4 @@
-package io.jutil.coreservice.auth.dict;
+package io.jutil.coreservice.core.dict;
 
 import io.jutil.springeasy.core.codec.json.Dict;
 import lombok.Getter;
@@ -19,5 +19,14 @@ public enum Realm implements Dict {
 	Realm(int code, String label) {
 		this.code = code;
 		this.label = label;
+	}
+
+	public static Realm from(int code) {
+		for (Realm realm : Realm.values()) {
+			if (realm.getCode() == code) {
+				return realm;
+			}
+		}
+		return null;
 	}
 }

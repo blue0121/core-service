@@ -6,6 +6,7 @@ import io.jutil.coreservice.auth.model.UserRequest;
 import io.jutil.coreservice.auth.model.UserResponse;
 import io.jutil.coreservice.auth.model.UserSearchRequest;
 import io.jutil.coreservice.auth.service.UserService;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.coreservice.core.model.PageResponse;
 import io.jutil.coreservice.core.util.AssertUtil;
 import io.jutil.springeasy.core.validation.ValidationUtil;
@@ -31,16 +32,18 @@ public class UserProvider implements UserFacade {
 	UserService userService;
 
 	@Override
-	public UserResponse getOne(long id) {
+	public UserResponse getOne(Realm realm, long id) {
+		AssertUtil.validNotNull(realm, "域");
 		AssertUtil.validId(id, "ID");
-		var entity = userService.getOne(id);
+		var entity = userService.getOne(realm, id);
 		return UserConvertor.toResponse(entity);
 	}
 
 	@Override
-	public Map<Long, UserResponse> getList(Collection<Long> idList) {
+	public Map<Long, UserResponse> getList(Realm realm, Collection<Long> idList) {
+		AssertUtil.validNotNull(realm, "域");
 		AssertUtil.validIdList(idList, "ID列表");
-		var map = userService.getList(idList);
+		var map = userService.getList(realm, idList);
 		return UserConvertor.toMapResponse(map);
 	}
 
@@ -69,15 +72,17 @@ public class UserProvider implements UserFacade {
 	}
 
 	@Override
-	public int deleteOne(long id) {
+	public int deleteOne(Realm realm, long id) {
+		AssertUtil.validNotNull(realm, "域");
 		AssertUtil.validId(id, "ID");
-		return userService.deleteOne(id);
+		return userService.deleteOne(realm, id);
 	}
 
 	@Override
-	public int deleteList(Collection<Long> idList) {
+	public int deleteList(Realm realm, Collection<Long> idList) {
+		AssertUtil.validNotNull(realm, "域");
 		AssertUtil.validIdList(idList, "ID列表");
-		return userService.deleteList(idList);
+		return userService.deleteList(realm, idList);
 	}
 
 	@Override

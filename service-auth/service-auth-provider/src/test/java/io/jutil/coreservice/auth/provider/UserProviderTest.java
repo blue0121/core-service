@@ -7,6 +7,7 @@ import io.jutil.coreservice.auth.entity.UserTest;
 import io.jutil.coreservice.auth.model.UserResponse;
 import io.jutil.coreservice.auth.model.UserSearchRequest;
 import io.jutil.coreservice.auth.service.UserService;
+import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.springeasy.core.collection.Sort;
 import io.jutil.springeasy.core.util.DateUtil;
 import io.jutil.springeasy.core.util.StringUtil;
@@ -40,24 +41,25 @@ class UserProviderTest {
 	void testGetOne() {
 		var now = DateUtil.now();
 		var user = UserTest.create(now);
-		Mockito.when(service.getOne(Mockito.anyLong())).thenReturn(user);
-		var response = provider.getOne(1L);
+		Mockito.when(service.getOne(Mockito.any(), Mockito.anyLong())).thenReturn(user);
+		var response = provider.getOne(Realm.ADMIN, 1L);
 		UserTest.verify(response, user.getId(),1, "code", "name", 0,
 				"remarks", "extension", "ip", now, now, now);
 	}
 
 	@Test
 	void testGetOne1() {
-		Assertions.assertThrows(ValidationException.class, () -> provider.getOne(0L));
-		Assertions.assertThrows(ValidationException.class, () -> provider.getOne(-1L));
+		Assertions.assertThrows(ValidationException.class, () -> provider.getOne(Realm.ADMIN, 0L));
+		Assertions.assertThrows(ValidationException.class, () -> provider.getOne(Realm.ADMIN, -1L));
 	}
 
 	@Test
 	void testGetList() {
 		var now = DateUtil.now();
 		var user = UserTest.create(now);
-		Mockito.when(service.getList(Mockito.anyList())).thenReturn(Map.of(user.getId(), user));
-		var response = provider.getList(List.of(1L));
+		Mockito.when(service.getList(Mockito.any(), Mockito.anyList()))
+				.thenReturn(Map.of(user.getId(), user));
+		var response = provider.getList(Realm.ADMIN, List.of(1L));
 		var view = response.get(user.getId());
 		UserTest.verify(view, user.getId(),1, "code", "name", 0,
 				"remarks", "extension", "ip", now, now, now);
@@ -66,49 +68,53 @@ class UserProviderTest {
 	@Test
 	void testGetList1() {
 		Assertions.assertThrows(ValidationException.class,
-				() -> provider.getList(null));
+				() -> provider.getList(null, List.of(1L)));
 		Assertions.assertThrows(ValidationException.class,
-				() -> provider.getList(List.of()));
+				() -> provider.getList(Realm.ADMIN, null));
 		Assertions.assertThrows(ValidationException.class,
-				() -> provider.getList(List.of(0L)));
+				() -> provider.getList(Realm.ADMIN, List.of()));
 		Assertions.assertThrows(ValidationException.class,
-				() -> provider.getList(List.of(-1L)));
+				() -> provider.getList(Realm.ADMIN, List.of(0L)));
 		Assertions.assertThrows(ValidationException.class,
-				() -> provider.getList(List.of(1L, -1L)));
+				() -> provider.getList(Realm.ADMIN, List.of(-1L)));
+		Assertions.assertThrows(ValidationException.class,
+				() -> provider.getList(Realm.ADMIN, List.of(1L, -1L)));
 	}
 
 	@Test
 	void testDeleteOne() {
-		Mockito.when(service.deleteOne(Mockito.anyLong())).thenReturn(1);
-		var count = provider.deleteOne(1L);
+		Mockito.when(service.deleteOne(Mockito.any(), Mockito.anyLong())).thenReturn(1);
+		var count = provider.deleteOne(Realm.ADMIN, 1L);
 		Assertions.assertEquals(1, count);
 	}
 
 	@Test
 	void testDeleteOne1() {
-		Assertions.assertThrows(ValidationException.class, () -> provider.deleteOne(0L));
-		Assertions.assertThrows(ValidationException.class, () -> provider.deleteOne(-1L));
+		Assertions.assertThrows(ValidationException.class, () -> provider.deleteOne(Realm.ADMIN, 0L));
+		Assertions.assertThrows(ValidationException.class, () -> provider.deleteOne(Realm.ADMIN, -1L));
 	}
 
 	@Test
 	void testDeleteList() {
-		Mockito.when(service.deleteList(Mockito.anyList())).thenReturn(1);
-		var count = provider.deleteList(List.of(1L));
+		Mockito.when(service.deleteList(Mockito.any(), Mockito.anyList())).thenReturn(1);
+		var count = provider.deleteList(Realm.ADMIN, List.of(1L));
 		Assertions.assertEquals(1, count);
 	}
 
 	@Test
 	void testDeleteList1() {
 		Assertions.assertThrows(ValidationException.class,
-				() -> provider.deleteList(null));
+				() -> provider.deleteList(null, List.of(1L)));
 		Assertions.assertThrows(ValidationException.class,
-				() -> provider.deleteList(List.of()));
+				() -> provider.deleteList(Realm.ADMIN, null));
 		Assertions.assertThrows(ValidationException.class,
-				() -> provider.deleteList(List.of(0L)));
+				() -> provider.deleteList(Realm.ADMIN, List.of()));
 		Assertions.assertThrows(ValidationException.class,
-				() -> provider.deleteList(List.of(-1L)));
+				() -> provider.deleteList(Realm.ADMIN, List.of(0L)));
 		Assertions.assertThrows(ValidationException.class,
-				() -> provider.deleteList(List.of(1L, -1L)));
+				() -> provider.deleteList(Realm.ADMIN, List.of(-1L)));
+		Assertions.assertThrows(ValidationException.class,
+				() -> provider.deleteList(Realm.ADMIN, List.of(1L, -1L)));
 	}
 
 	@Test
@@ -312,6 +318,8 @@ class UserProviderTest {
 	@Test
 	void testSearch() {
 		var request = new UserSearchRequest();
+		request.setFilter(new UserSearchRequest.SearchRequest());
+		request.getFilter().setRealm(Realm.ADMIN);
 		SearchRequestTest.setPage(request, "id", Sort.Direction.DESC);
 
 		var page = PageTest.createPage();
@@ -331,6 +339,15 @@ class UserProviderTest {
 	@Test
 	void testSearch1() {
 		var request = new UserSearchRequest();
+		SearchRequestTest.setPage(request, "id", Sort.Direction.DESC);
+		Assertions.assertThrows(ValidationException.class, () -> provider.search(request));
+	}
+
+	@Test
+	void testSearch2() {
+		var request = new UserSearchRequest();
+		request.setFilter(new UserSearchRequest.SearchRequest());
+		request.getFilter().setRealm(Realm.ADMIN);
 		SearchRequestTest.setPage(request, "abc", Sort.Direction.DESC);
 		Assertions.assertThrows(ValidationException.class, () -> provider.search(request));
 	}
