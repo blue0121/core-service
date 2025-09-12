@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration debug="false">
+    <conversionRule conversionWord="fcHighlight" class="io.jutil.springeasy.core.io.BacklogHighlight" />
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%magenta(%d{HH:mm:ss.SSS}) [%cyan(%t)] [%boldGreen(%c{30}):%L] %fcHighlight(%p) - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="io.jutil.coreservice" level="DEBUG" additivity="false">
+        <appender-ref ref="stdout"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="stdout"/>
+    </root>
+
+</configuration>

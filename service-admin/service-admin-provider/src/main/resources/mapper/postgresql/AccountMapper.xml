@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.jutil.coreservice.admin.dao.AccountMapper">
+
+	<insert id="insertOne">
+		INSERT INTO adm_account (id, tenant_id, operator_id, code, name, status, remarks,
+			image_url, create_time, update_time)
+		VALUES (#{entity.id}, #{entity.tenantId}, #{entity.operatorId}, #{entity.code},
+			#{entity.name}, #{entity.status}, #{entity.remarks}, #{entity.imageUrl},
+			now(), now())
+		ON CONFLICT DO NOTHING
+	</insert>
+
+</mapper>

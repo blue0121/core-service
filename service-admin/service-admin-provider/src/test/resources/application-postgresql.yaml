@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432
+    username: testuser
+    password: testpass
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/postgresql/*.sql
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml,mapper/postgresql/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    default-enum-type-handler: io.jutil.springeasy.mybatis.handler.DictTypeHandler
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl

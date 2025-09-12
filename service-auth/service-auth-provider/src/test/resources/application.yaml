@@ -5,7 +5,6 @@ springeasy:
   web:
     dict-scan-packages:
       - io.jutil.coreservice.core.dict
-      - io.jutil.coreservice.auth.dict
 
 app:
   token:

@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class UserLoginLog {
-	private Long id;
+	private long id;
 	private Realm realm;
-	private Long userId;
+	private long userId;
 	private String ip;
 	private LocalDate loginDate;
 	private int loginCount;

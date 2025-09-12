@@ -17,6 +17,9 @@
 	<modules>
 		<module>service-auth</module>
 		<module>service-core</module>
+		<module>service-admin</module>
+		<module>service-admin/service-admin-facade</module>
+		<module>service-admin/service-admin-provider</module>
 	</modules>
 
 	<properties>

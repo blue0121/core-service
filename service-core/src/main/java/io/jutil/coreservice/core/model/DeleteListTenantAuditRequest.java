@@ -1,0 +1,28 @@
+package io.jutil.coreservice.core.model;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Collection;
+
+/**
+ * @author Jin Zheng
+ * @since 2025-09-11
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+public class DeleteListTenantAuditRequest {
+	@NotEmpty(message = "ID列表不能为空")
+	protected Collection<Long> idList;
+
+	@Min(value = 1L, message = "租户ID不能为空")
+	protected long tenantId;
+
+	@Min(value = 1L, message = "操作人ID不能为空")
+	protected long operatorId;
+
+}

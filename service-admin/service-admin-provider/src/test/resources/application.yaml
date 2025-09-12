@@ -1,0 +1,9 @@
+
+springeasy:
+  node:
+    machineId: 1
+  web:
+    dict-scan-packages:
+      - io.jutil.coreservice.core.dict
+
+

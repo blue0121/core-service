@@ -5,12 +5,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.jutil.core-service</groupId>
-		<artifactId>service-auth</artifactId>
+		<artifactId>service-admin</artifactId>
 		<version>${revision}</version>
 	</parent>
-	<artifactId>service-auth-provider</artifactId>
+	<artifactId>service-admin-provider</artifactId>
 
 	<dependencies>
+		<dependency>
+			<groupId>io.jutil.core-service</groupId>
+			<artifactId>service-admin-facade</artifactId>
+			<version>${revision}</version>
+		</dependency>
 		<dependency>
 			<groupId>io.jutil.core-service</groupId>
 			<artifactId>service-auth-facade</artifactId>
