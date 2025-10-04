@@ -7,6 +7,7 @@ import io.jutil.springeasy.mybatis.id.LongIdGenerator;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Jin Zheng
@@ -23,6 +24,7 @@ public class AccountTest {
 		entity.setName("name");
 		entity.setStatus(Status.ACTIVE);
 		entity.setRemarks("remarks");
+		entity.setTenantIdList(List.of(1L, 11L));
 		entity.setCreateTime(loginTime);
 		entity.setUpdateTime(loginTime);
 		return entity;
@@ -35,8 +37,10 @@ public class AccountTest {
 		request.setOperatorId(2L);
 		request.setCode("code");
 		request.setName("name");
+		request.setPassword("password");
 		request.setStatus(Status.ACTIVE);
 		request.setRemarks("remarks");
+		request.setTenantIdList(List.of(1L, 11L));
 		return request;
 	}
 
@@ -51,11 +55,10 @@ public class AccountTest {
 		Assertions.assertEquals(remarks, entity.getRemarks());
 	}
 
-	public static void verify(AccountResponse response, long id, int tenantId, long operatorId,
+	public static void verify(AccountResponse response, long tenantId, long operatorId,
 	                          String code, String name, int status, String remarks,
 	                          LocalDateTime createTime, LocalDateTime updateTime) {
 		Assertions.assertNotNull(response);
-		Assertions.assertEquals(id, response.getId());
 		Assertions.assertEquals(tenantId, response.getTenantId());
 		Assertions.assertEquals(operatorId, response.getOperatorId());
 		Assertions.assertEquals(code, response.getCode());
@@ -66,10 +69,9 @@ public class AccountTest {
 		Assertions.assertEquals(updateTime, response.getUpdateTime());
 	}
 
-	public static void verify(AccountResponse response, long id, int tenantId, long operatorId,
+	public static void verify(AccountResponse response, long tenantId, long operatorId,
 	                          String code,  String name, int status, String remarks) {
 		Assertions.assertNotNull(response);
-		Assertions.assertEquals(id, response.getId());
 		Assertions.assertEquals(tenantId, response.getTenantId());
 		Assertions.assertEquals(operatorId, response.getOperatorId());
 		Assertions.assertEquals(code, response.getCode());

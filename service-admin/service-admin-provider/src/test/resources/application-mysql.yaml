@@ -10,7 +10,7 @@ spring:
       schema-locations: classpath:sql/mysql/*.sql
 
 mybatis:
-  mapper-locations: classpath:mapper/*.xml,mapper/mysql/*.xml
+  mapper-locations: classpath*:mapper/*.xml,mapper/mysql/*.xml
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false

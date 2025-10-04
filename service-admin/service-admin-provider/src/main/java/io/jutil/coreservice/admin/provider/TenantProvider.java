@@ -1,14 +1,12 @@
 package io.jutil.coreservice.admin.provider;
 
-import io.jutil.coreservice.admin.covertor.AuditLogConvertor;
 import io.jutil.coreservice.admin.covertor.TenantConvertor;
 import io.jutil.coreservice.admin.facade.TenantFacade;
 import io.jutil.coreservice.admin.model.TenantRequest;
 import io.jutil.coreservice.admin.model.TenantResponse;
 import io.jutil.coreservice.admin.model.TenantSearchRequest;
-import io.jutil.coreservice.admin.service.AuditLogService;
 import io.jutil.coreservice.admin.service.TenantService;
-import io.jutil.coreservice.admin.util.BusinessType;
+import io.jutil.coreservice.core.facade.AuditLogFacade;
 import io.jutil.coreservice.core.model.AuditLogSearchRequest;
 import io.jutil.coreservice.core.model.PageResponse;
 import io.jutil.coreservice.core.util.AssertUtil;
@@ -31,10 +29,10 @@ public class TenantProvider implements TenantFacade {
 	private static final Set<String> SORT_FIELD_SET = Set.of("id", "createTime", "updateTime");
 
 	@Autowired
-	TenantService tenantService;
+	AuditLogFacade auditLogFacade;
 
 	@Autowired
-	AuditLogService auditLogService;
+	TenantService tenantService;
 
 	@Override
 	public TenantResponse getOne(long id) {
@@ -92,10 +90,6 @@ public class TenantProvider implements TenantFacade {
 
 	@Override
 	public PageResponse searchAuditLog(AuditLogSearchRequest searchRequest) {
-		ValidationUtil.valid(searchRequest);
-		var search = AuditLogConvertor.toSearch(searchRequest, BusinessType.TENANT);
-		var page = searchRequest.toPage();
-		page = auditLogService.search(search, page);
-		return AuditLogConvertor.toPageResponse(page);
+		return auditLogFacade.search(searchRequest, AuditLogFacade.Business.TENANT);
 	}
 }

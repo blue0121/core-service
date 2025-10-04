@@ -2,9 +2,9 @@ package io.jutil.coreservice.auth.model;
 
 import io.jutil.coreservice.core.dict.Realm;
 import io.jutil.coreservice.core.dict.Status;
+import io.jutil.coreservice.core.model.BaseRequest;
 import io.jutil.springeasy.core.validation.group.AddOperation;
 import io.jutil.springeasy.core.validation.group.UpdateOperation;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,10 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserRequest {
-	@Min(value = 1L, groups = {UpdateOperation.class}, message = "ID不能为空")
-	private long id;
-
+public class UserRequest extends BaseRequest {
 	@NotNull(groups = {AddOperation.class, UpdateOperation.class}, message = "域不能为空")
 	private Realm realm;
 

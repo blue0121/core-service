@@ -8,5 +8,5 @@ import io.jutil.springeasy.test.container.MySQLTest;
  * @author Jin Zheng
  * @since 2025-09-11
  */
-public class TenantRepositoryIT extends TenantRepositoryTest implements MySQLTest, BaseTest {
+class TenantRepositoryIT extends TenantRepositoryTest implements MySQLTest, BaseTest {
 }

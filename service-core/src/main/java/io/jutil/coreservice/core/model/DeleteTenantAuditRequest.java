@@ -13,13 +13,20 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class DeleteTenantAuditRequest {
-	@Min(value = 1L, message = "ID不能为空")
-	protected long id;
-
 	@Min(value = 1L, message = "租户ID不能为空")
 	protected long tenantId;
+
+	@Min(value = 1L, message = "ID不能为空")
+	protected long id;
 
 	@Min(value = 1L, message = "操作人ID不能为空")
 	protected long operatorId;
 
+	public static DeleteTenantAuditRequest create(long tenantId, long id, long operatorId) {
+		var request = new DeleteTenantAuditRequest();
+		request.tenantId = tenantId;
+		request.id = id;
+		request.operatorId = operatorId;
+		return request;
+	}
 }

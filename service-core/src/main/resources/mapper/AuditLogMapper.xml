@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.jutil.coreservice.core.dao.AuditLogMapper">
+
+	<select id="selectOne" resultMap="auditLogMap">
+		SELECT * FROM ${business}_audit_log WHERE id=#{id} AND tenant_id=#{tenantId}
+	</select>
+
+	<insert id="insertOne">
+		INSERT INTO ${entity.business}_audit_log (id, tenant_id, business_id, operator_id,
+			operation, content, create_time)
+		VALUES (#{entity.id}, #{entity.tenantId}, #{entity.businessId}, #{entity.operatorId},
+			#{entity.operation}, #{entity.content}, now())
+	</insert>
+
+	<select id="countPage" resultType="_int">
+		SELECT COUNT(*) FROM ${search.business}_audit_log e
+		<where>
+			<include refid="pageCond" />
+		</where>
+	</select>
+
+	<sql id="pageCond">
+		<if test="search.tenantId > 0">
+			AND e.tenant_id = #{search.tenantId}
+		</if>
+		<if test="search.businessId > 0">
+			AND e.business_id = #{search.businessId}
+		</if>
+		<if test="search.operatorId > 0">
+			AND e.operator_id = #{search.operatorId}
+		</if>
+		<if test="search.operation != null">
+			AND e.operation = #{search.operation}
+		</if>
+		<if test="search.startDate != null">
+			AND e.create_time &gt;= #{search.startDate}
+		</if>
+		<if test="search.endDate != null">
+			AND e.create_time &lt; #{search.endDate}
+		</if>
+	</sql>
+
+	<select id="listPage" resultMap="auditLogMap">
+		SELECT e.id, e.tenant_id, e.business_id, e.operator_id, e.operation, e.create_time, e.content
+		FROM ${search.business}_audit_log e
+		<where>
+			<include refid="pageCond" />
+		</where>
+		${pageable.orderBy}
+		LIMIT #{pageable.size} OFFSET #{pageable.offset}
+	</select>
+
+	<resultMap id="auditLogMap" type="io.jutil.coreservice.core.entity.AuditLog">
+		<id property="id" column="id" />
+		<result property="tenantId" column="tenant_id" />
+		<result property="businessId" column="business_id" />
+		<result property="operatorId" column="operator_id" />
+		<result property="operation" column="operation" />
+		<result property="content" column="content" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+</mapper>

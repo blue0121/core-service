@@ -16,6 +16,7 @@ import java.util.Collection;
 @NoArgsConstructor
 public class AccountSearch {
 	private long tenantId;
+	private long operatorId;
 	private Status status;
 	private String code;
 	private String name;

@@ -8,7 +8,14 @@ import io.jutil.coreservice.core.model.BaseAuditResponse;
 import io.jutil.coreservice.core.model.BaseResponse;
 import io.jutil.coreservice.core.model.BaseTenantAuditResponse;
 import io.jutil.coreservice.core.model.BaseTenantResponse;
+import io.jutil.coreservice.core.model.PageResponse;
+import io.jutil.springeasy.core.collection.Page;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -46,4 +53,38 @@ public class BaseResponseConvertor {
 		return response;
 	}
 
+	public static <E, R> List<R> toListResponse(List<E> entityList, Function<E, R> f) {
+		var responseList = new ArrayList<R>();
+		if (entityList == null || entityList.isEmpty()) {
+			return responseList;
+		}
+		for (E entity : entityList) {
+			var response = f.apply(entity);
+			if (response != null) {
+				responseList.add(response);
+			}
+		}
+		return responseList;
+	}
+
+	public static <E, R> Map<Long, R> toMapResponse(Map<Long, E> entityMap, Function<E, R> f) {
+		var responseMap = new HashMap<Long, R>();
+		if (entityMap == null || entityMap.isEmpty()) {
+			return responseMap;
+		}
+		for (var entry : entityMap.entrySet()) {
+			var response = f.apply(entry.getValue());
+			if (response != null) {
+				responseMap.put(entry.getKey(), response);
+			}
+		}
+		return responseMap;
+	}
+
+	public static <E, R> PageResponse toPageResponse(Page page, Function<List<E>, List<R>> f) {
+		var response = PageResponse.from(page);
+		List<E> entityList = page.getContents();
+		response.setContents(f.apply(entityList));
+		return response;
+	}
 }

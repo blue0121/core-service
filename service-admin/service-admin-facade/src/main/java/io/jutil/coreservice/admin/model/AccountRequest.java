@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Collection;
+
 /**
  * @author Jin Zheng
  * @since 2025-09-07
@@ -27,6 +29,10 @@ public class AccountRequest extends BaseTenantAuditRequest {
 	@Size(max = 50, groups = {AddOperation.class, UpdateOperation.class}, message = "名称最大长度50")
 	private String name;
 
+	@NotEmpty(groups = {AddOperation.class}, message = "密码不能为空")
+	private String password;
+	private String oldPassword;
+
 	@NotNull(groups = {AddOperation.class}, message = "状态不能为空")
 	private Status status;
 
@@ -35,4 +41,7 @@ public class AccountRequest extends BaseTenantAuditRequest {
 
 	@Size(max = 500, groups = {AddOperation.class, UpdateOperation.class}, message = "备注最大长度500")
 	private String remarks;
+
+	@NotEmpty(groups = {AddOperation.class}, message = "租户ID列表不能为空")
+	private Collection<Long> tenantIdList;
 }

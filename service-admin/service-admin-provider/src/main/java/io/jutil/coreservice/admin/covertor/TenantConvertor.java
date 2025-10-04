@@ -77,7 +77,7 @@ public class TenantConvertor {
 
 	public static PageResponse toPageResponse(Page page) {
 		var response = PageResponse.from(page);
-		response.setContents(toListResponse(response.getContents()));
+		response.setContents(toListResponse(page.getContents()));
 		return response;
 	}
 }

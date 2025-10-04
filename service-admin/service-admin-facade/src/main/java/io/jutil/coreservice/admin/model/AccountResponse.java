@@ -1,7 +1,7 @@
 package io.jutil.coreservice.admin.model;
 
-import io.jutil.coreservice.admin.fetcher.OperatorFetcher;
 import io.jutil.coreservice.core.dict.Status;
+import io.jutil.coreservice.core.fetcher.OperatorFetcher;
 import io.jutil.coreservice.core.model.BaseTenantAuditResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -3,8 +3,10 @@ package io.jutil.coreservice.admin.repository;
 import io.jutil.coreservice.admin.dao.TenantMapper;
 import io.jutil.coreservice.admin.entity.Tenant;
 import io.jutil.coreservice.admin.entity.TenantSearch;
-import io.jutil.coreservice.admin.util.BusinessType;
+import io.jutil.coreservice.core.facade.AuditLogFacade;
+import io.jutil.coreservice.core.repository.AuditLogRepository;
 import io.jutil.coreservice.core.repository.PageableRepository;
+import io.jutil.coreservice.core.util.Const;
 import io.jutil.springeasy.core.collection.Page;
 import io.jutil.springeasy.mybatis.id.LongIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +42,8 @@ public class TenantRepository {
 		if (count == 0) {
 			return null;
 		}
-		auditLogRepository.addOperation(BusinessType.TENANT, entity.getId(), entity.getId(),
-				entity.getOperatorId(), entity);
+		auditLogRepository.addOperation(AuditLogFacade.Business.TENANT, Const.DEFAULT_TENANT_ID,
+				entity.getId(), entity.getOperatorId(), entity);
 		return this.getOne(entity.getId());
 	}
 
@@ -50,8 +52,8 @@ public class TenantRepository {
 		if (count == 0) {
 			return null;
 		}
-		auditLogRepository.updateOperation(BusinessType.TENANT, entity.getId(), entity.getId(),
-				entity.getOperatorId(), entity);
+		auditLogRepository.updateOperation(AuditLogFacade.Business.TENANT, Const.DEFAULT_TENANT_ID,
+				entity.getId(), entity.getOperatorId(), entity);
 		return this.getOne(entity.getId());
 	}
 
@@ -68,7 +70,8 @@ public class TenantRepository {
 		if (count == 0) {
 			return 0;
 		}
-		auditLogRepository.deleteOperation(BusinessType.TENANT, id, id, operatorId);
+		auditLogRepository.deleteOperation(AuditLogFacade.Business.TENANT, Const.DEFAULT_TENANT_ID,
+				id, operatorId);
 		return count;
 	}
 
@@ -77,8 +80,8 @@ public class TenantRepository {
 		if (count == 0) {
 			return 0;
 		}
-		var tenantId = idList.iterator().next();
-		auditLogRepository.deleteListOperation(BusinessType.TENANT, tenantId, idList, operatorId);
+		auditLogRepository.deleteListOperation(AuditLogFacade.Business.TENANT, Const.DEFAULT_TENANT_ID,
+				idList, operatorId);
 		return count;
 	}
 

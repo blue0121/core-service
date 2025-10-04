@@ -1,8 +1,11 @@
 package io.jutil.coreservice.admin.entity;
 
 import com.alibaba.fastjson2.JSONObject;
-import io.jutil.coreservice.admin.util.BusinessType;
 import io.jutil.coreservice.core.dict.Operation;
+import io.jutil.coreservice.core.entity.AuditLog;
+import io.jutil.coreservice.core.facade.AuditLogFacade;
+import io.jutil.coreservice.core.model.AuditLogResponse;
+import io.jutil.springeasy.core.codec.json.JsonEquals;
 import io.jutil.springeasy.mybatis.id.LongIdGenerator;
 import org.junit.jupiter.api.Assertions;
 
@@ -20,7 +23,7 @@ public class AuditLogTest {
 		entity.setOperatorId(2L);
 		entity.setOperation(Operation.DELETE);
 		entity.setContent(JSONObject.of("id", 1L));
-		entity.setBusiness(BusinessType.TENANT);
+		entity.setBusiness(AuditLogFacade.Business.TENANT.getLabel());
 		return entity;
 	}
 
@@ -31,5 +34,34 @@ public class AuditLogTest {
 		Assertions.assertEquals(businessId, entity.getBusinessId());
 		Assertions.assertEquals(operatorId, entity.getOperatorId());
 		Assertions.assertEquals(operation, entity.getOperation().getCode());
+	}
+
+	public static void verify(AuditLog entity, long tenantId, long businessId, long operatorId,
+	                          int operation, JSONObject content) {
+		Assertions.assertNotNull(entity);
+		Assertions.assertEquals(tenantId, entity.getTenantId());
+		Assertions.assertEquals(businessId, entity.getBusinessId());
+		Assertions.assertEquals(operatorId, entity.getOperatorId());
+		Assertions.assertEquals(operation, entity.getOperation().getCode());
+		Assertions.assertTrue(JsonEquals.equals(content, entity.getContent()));
+	}
+
+	public static void verify(AuditLogResponse response, long tenantId, long businessId, long operatorId,
+	                          int operation) {
+		Assertions.assertNotNull(response);
+		Assertions.assertEquals(tenantId, response.getTenantId());
+		Assertions.assertEquals(businessId, response.getBusinessId());
+		Assertions.assertEquals(operatorId, response.getOperatorId());
+		Assertions.assertEquals(operation, response.getOperation().getCode());
+	}
+
+	public static void verify(AuditLogResponse response, long tenantId, long businessId, long operatorId,
+	                          int operation, JSONObject content) {
+		Assertions.assertNotNull(response);
+		Assertions.assertEquals(tenantId, response.getTenantId());
+		Assertions.assertEquals(businessId, response.getBusinessId());
+		Assertions.assertEquals(operatorId, response.getOperatorId());
+		Assertions.assertEquals(operation, response.getOperation().getCode());
+		Assertions.assertTrue(JsonEquals.equals(content, response.getContent()));
 	}
 }

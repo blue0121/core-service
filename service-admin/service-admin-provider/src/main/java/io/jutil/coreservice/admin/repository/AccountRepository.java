@@ -1,9 +1,11 @@
 package io.jutil.coreservice.admin.repository;
 
 import io.jutil.coreservice.admin.dao.AccountMapper;
+import io.jutil.coreservice.admin.dao.AccountTenantMapper;
 import io.jutil.coreservice.admin.entity.Account;
 import io.jutil.coreservice.admin.entity.AccountSearch;
-import io.jutil.coreservice.admin.util.BusinessType;
+import io.jutil.coreservice.core.facade.AuditLogFacade;
+import io.jutil.coreservice.core.repository.AuditLogRepository;
 import io.jutil.coreservice.core.repository.PageableRepository;
 import io.jutil.springeasy.core.collection.Page;
 import io.jutil.springeasy.mybatis.id.LongIdGenerator;
@@ -31,6 +33,9 @@ public class AccountRepository {
 	AccountMapper accountMapper;
 
 	@Autowired
+	AccountTenantMapper accountTenantMapper;
+
+	@Autowired
 	AuditLogRepository auditLogRepository;
 
 	public Account addOne(Account entity) {
@@ -39,8 +44,9 @@ public class AccountRepository {
 		if (count == 0) {
 			return null;
 		}
-		auditLogRepository.addOperation(BusinessType.ACCOUNT, entity.getTenantId(), entity.getId(),
-				entity.getOperatorId(), entity);
+		accountTenantMapper.insert(entity.getId(), entity.getTenantIdList());
+		auditLogRepository.addOperation(AuditLogFacade.Business.ACCOUNT, entity.getTenantId(),
+				entity.getId(), entity.getOperatorId(), entity);
 		return this.getOne(entity.getTenantId(), entity.getId());
 	}
 
@@ -49,8 +55,10 @@ public class AccountRepository {
 		if (count == 0) {
 			return null;
 		}
-		auditLogRepository.updateOperation(BusinessType.ACCOUNT, entity.getTenantId(), entity.getId(),
-				entity.getOperatorId(), entity);
+		accountTenantMapper.deleteByAccountId(entity.getId());
+		accountTenantMapper.insert(entity.getId(), entity.getTenantIdList());
+		auditLogRepository.updateOperation(AuditLogFacade.Business.ACCOUNT, entity.getTenantId(),
+				entity.getId(), entity.getOperatorId(), entity);
 		return this.getOne(entity.getTenantId(), entity.getId());
 	}
 
@@ -67,7 +75,9 @@ public class AccountRepository {
 		if (count == 0) {
 			return 0;
 		}
-		auditLogRepository.deleteOperation(BusinessType.ACCOUNT, tenantId, id, operatorId);
+		accountTenantMapper.deleteByAccountId(id);
+		auditLogRepository.deleteOperation(AuditLogFacade.Business.ACCOUNT, tenantId,
+				id, operatorId);
 		return count;
 	}
 
@@ -76,7 +86,9 @@ public class AccountRepository {
 		if (count == 0) {
 			return 0;
 		}
-		auditLogRepository.deleteListOperation(BusinessType.ACCOUNT, tenantId, idList, operatorId);
+		accountTenantMapper.deleteByAccountIdList(idList);
+		auditLogRepository.deleteListOperation(AuditLogFacade.Business.ACCOUNT, tenantId,
+				idList, operatorId);
 		return count;
 	}
 

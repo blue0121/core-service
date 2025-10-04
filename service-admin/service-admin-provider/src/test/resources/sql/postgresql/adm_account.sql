@@ -22,7 +22,7 @@ COMMENT ON COLUMN adm_account.image_url IS '头像URL';
 COMMENT ON COLUMN adm_account.create_time IS '创建时间';
 COMMENT ON COLUMN adm_account.update_time IS '更新时间';
 
-CREATE INDEX idx_adm_account_code ON adm_account (code);
+CREATE UNIQUE INDEX udx_adm_account_code ON adm_account (code);
 
 
 CREATE TABLE adm_account_tenant (

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.jutil.springeasy</groupId>
 		<artifactId>springeasy-parent</artifactId>
-		<version>1.2.1-106</version>
+		<version>1.2.1-109</version>
 	</parent>
 
 	<groupId>io.jutil.core-service</groupId>

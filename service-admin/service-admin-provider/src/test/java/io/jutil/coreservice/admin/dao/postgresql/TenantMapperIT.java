@@ -8,5 +8,5 @@ import io.jutil.springeasy.test.container.PostgreSQLTest;
  * @author Jin Zheng
  * @since 2025-09-11
  */
-public class TenantMapperIT extends TenantMapperTest implements PostgreSQLTest, BaseTest {
+class TenantMapperIT extends TenantMapperTest implements PostgreSQLTest, BaseTest {
 }

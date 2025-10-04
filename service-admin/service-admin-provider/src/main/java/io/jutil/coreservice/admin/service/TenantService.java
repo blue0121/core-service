@@ -3,12 +3,13 @@ package io.jutil.coreservice.admin.service;
 import io.jutil.coreservice.admin.entity.Tenant;
 import io.jutil.coreservice.admin.entity.TenantSearch;
 import io.jutil.coreservice.admin.repository.TenantRepository;
+import io.jutil.coreservice.core.util.ListUtil;
 import io.jutil.springeasy.core.collection.Page;
+import io.jutil.springeasy.spring.exception.BaseErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,15 +27,15 @@ public class TenantService {
 
 	public Map<Long, Tenant> getList(Collection<Long> idList) {
 		var list = tenantRepository.getList(idList);
-		Map<Long, Tenant> map = new HashMap<>();
-		for (var entity : list) {
-			map.put(entity.getId(), entity);
-		}
-		return map;
+		return ListUtil.toMap(list);
 	}
 
 	public Tenant addOne(Tenant entity) {
-		return tenantRepository.addOne(entity);
+		var newEntity = tenantRepository.addOne(entity);
+		if (newEntity == null) {
+			throw BaseErrorCode.EXISTS.newException(entity.getCode());
+		}
+		return newEntity;
 	}
 
 	public Tenant updateOne(Tenant entity) {

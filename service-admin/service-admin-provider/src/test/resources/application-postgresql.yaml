@@ -10,7 +10,7 @@ spring:
       schema-locations: classpath:sql/postgresql/*.sql
 
 mybatis:
-  mapper-locations: classpath:mapper/*.xml,mapper/postgresql/*.xml
+  mapper-locations: classpath*:mapper/*.xml,mapper/postgresql/*.xml
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false

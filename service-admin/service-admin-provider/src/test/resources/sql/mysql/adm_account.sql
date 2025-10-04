@@ -10,7 +10,7 @@ CREATE TABLE adm_account (
 	create_time          DATETIME                    NOT NULL         COMMENT '创建时间',
 	update_time          DATETIME                    NOT NULL         COMMENT '更新时间'
 ) COMMENT = '账号';
-CREATE INDEX idx_code ON adm_account (code);
+CREATE UNIQUE INDEX udx_code ON adm_account (code);
 
 
 CREATE TABLE adm_account_tenant (

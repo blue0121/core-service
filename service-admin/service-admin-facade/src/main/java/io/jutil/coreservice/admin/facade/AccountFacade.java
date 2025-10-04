@@ -4,11 +4,19 @@ import io.jutil.coreservice.admin.model.AccountRequest;
 import io.jutil.coreservice.admin.model.AccountResponse;
 import io.jutil.coreservice.admin.model.AccountSearchRequest;
 import io.jutil.coreservice.core.facade.BaseTenantAuditFacade;
+import io.jutil.coreservice.core.model.PageResponse;
 
 /**
  * @author Jin Zheng
  * @since 2025-09-07
  */
 public interface AccountFacade extends BaseTenantAuditFacade<AccountRequest, AccountResponse, AccountSearchRequest> {
+
+	/**
+	 * 管理账号列表
+	 * @param searchRequest
+	 * @return
+	 */
+	PageResponse listAll(AccountSearchRequest searchRequest);
 
 }

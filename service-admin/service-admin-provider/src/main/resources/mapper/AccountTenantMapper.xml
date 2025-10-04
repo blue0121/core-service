@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.jutil.coreservice.admin.dao.AccountTenantMapper">
+
+	<insert id="insert">
+		INSERT INTO adm_account_tenant (account_id, tenant_id)
+		VALUES
+		<foreach collection="tenantIdList" item="item" open="" separator="," close="">
+			(#{accountId},#{item})
+		</foreach>
+	</insert>
+
+	<delete id="deleteByAccountId">
+		DELETE FROM adm_account_tenant WHERE account_id=#{accountId}
+	</delete>
+
+	<delete id="deleteByAccountIdList">
+		DELETE FROM adm_account_tenant WHERE
+		<foreach collection="accountIdList" item="item" open="account_id in (" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<select id="listByAccountId" resultType="long">
+		SELECT tenant_id FROM adm_account_tenant WHERE account_id=#{accountId}
+	</select>
+
+</mapper>
