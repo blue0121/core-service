@@ -7,7 +7,7 @@ import io.jutil.coreservice.admin.entity.TenantTest;
 import io.jutil.coreservice.admin.model.TenantRequest;
 import io.jutil.coreservice.admin.model.TenantResponse;
 import io.jutil.coreservice.admin.model.TenantSearchRequest;
-import io.jutil.coreservice.admin.provider.AuditLogProviderTest;
+import io.jutil.coreservice.admin.repository.AuditLogRepositoryTest;
 import io.jutil.coreservice.core.dict.Operation;
 import io.jutil.coreservice.core.dict.Status;
 import io.jutil.coreservice.core.facade.AuditLogFacade;
@@ -31,7 +31,7 @@ public abstract class TenantFacadeTest {
 	TenantFacade facade;
 
 	@Autowired
-	AuditLogProviderTest auditLogProviderTest;
+	AuditLogRepositoryTest auditLogRepositoryTest;
 	
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -39,7 +39,7 @@ public abstract class TenantFacadeTest {
 	@BeforeEach
 	public void beforeEach() {
 		jdbcTemplate.update("TRUNCATE TABLE adm_tenant");
-		auditLogProviderTest.beforeEach();
+		auditLogRepositoryTest.beforeEach(AuditLogFacade.Business.TENANT);
 	}
 
 	@Test
@@ -55,10 +55,10 @@ public abstract class TenantFacadeTest {
 		TenantTest.verify(view, 2L, "code", "test",
 				0, "remarks");
 
-		var auditLogList = auditLogProviderTest.list(Const.DEFAULT_TENANT_ID, response.getId(),
+		var auditLogList = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, response.getId(),
 				AuditLogFacade.Business.TENANT, Operation.UPDATE);
 		Assertions.assertEquals(1, auditLogList.size());
-		AuditLogTest.verify(auditLogList.getFirst(), Const.DEFAULT_TENANT_ID, response.getId(),
+		AuditLogTest.verify(auditLogList.getFirst(), Const.PLATFORM_TENANT_ID, response.getId(),
 				2L, 2);
 	}
 
@@ -87,10 +87,10 @@ public abstract class TenantFacadeTest {
 
 		this.searchTenantAndVerify(0, 0);
 
-		var auditLogList = auditLogProviderTest.list(Const.DEFAULT_TENANT_ID, response.getId(),
+		var auditLogList = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, response.getId(),
 				AuditLogFacade.Business.TENANT, Operation.DELETE);
 		Assertions.assertEquals(1, auditLogList.size());
-		AuditLogTest.verify(auditLogList.getFirst(), Const.DEFAULT_TENANT_ID, response.getId(),
+		AuditLogTest.verify(auditLogList.getFirst(), Const.PLATFORM_TENANT_ID, response.getId(),
 				1L, 3);
 	}
 
@@ -104,16 +104,16 @@ public abstract class TenantFacadeTest {
 
 		this.searchTenantAndVerify(0, 0);
 
-		var auditLogList1 = auditLogProviderTest.list(Const.DEFAULT_TENANT_ID, response.getId(),
+		var auditLogList1 = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, response.getId(),
 				AuditLogFacade.Business.TENANT, Operation.DELETE);
 		Assertions.assertEquals(1, auditLogList1.size());
-		AuditLogTest.verify(auditLogList1.getFirst(), Const.DEFAULT_TENANT_ID, response.getId(),
+		AuditLogTest.verify(auditLogList1.getFirst(), Const.PLATFORM_TENANT_ID, response.getId(),
 				1L, 3);
 
-		var auditLogList2 = auditLogProviderTest.list(Const.DEFAULT_TENANT_ID, response2.getId(),
+		var auditLogList2 = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, response2.getId(),
 				AuditLogFacade.Business.TENANT, Operation.DELETE);
 		Assertions.assertEquals(1, auditLogList2.size());
-		AuditLogTest.verify(auditLogList2.getFirst(), Const.DEFAULT_TENANT_ID, response2.getId(),
+		AuditLogTest.verify(auditLogList2.getFirst(), Const.PLATFORM_TENANT_ID, response2.getId(),
 				1L, 3);
 	}
 
@@ -132,10 +132,10 @@ public abstract class TenantFacadeTest {
 		TenantTest.verify(view, 1L, "code", "name",
 				0, "remarks");
 
-		var addLogList = auditLogProviderTest.list(Const.DEFAULT_TENANT_ID, response.getId(),
+		var addLogList = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, response.getId(),
 				AuditLogFacade.Business.TENANT, Operation.ADD);
 		Assertions.assertEquals(1, addLogList.size());
-		AuditLogTest.verify(addLogList.getFirst(), Const.DEFAULT_TENANT_ID, response.getId(),
+		AuditLogTest.verify(addLogList.getFirst(), Const.PLATFORM_TENANT_ID, response.getId(),
 				1L, 1);
 
 		return response;
@@ -151,10 +151,10 @@ public abstract class TenantFacadeTest {
 		TenantTest.verify(view, 1, "code2", "name2",
 				0, "remarks");
 
-		var addLogList = auditLogProviderTest.list(Const.DEFAULT_TENANT_ID, response.getId(),
+		var addLogList = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, response.getId(),
 				AuditLogFacade.Business.TENANT, Operation.ADD);
 		Assertions.assertEquals(1, addLogList.size());
-		AuditLogTest.verify(addLogList.getFirst(), Const.DEFAULT_TENANT_ID, response.getId(),
+		AuditLogTest.verify(addLogList.getFirst(), Const.PLATFORM_TENANT_ID, response.getId(),
 				1L, 1);
 
 		return response;

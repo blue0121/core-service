@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="io.jutil.coreservice.admin.dao.AccountMapper">
+<mapper namespace="io.jutil.coreservice.admin.dao.ConfigMapper">
 
 	<update id="updateOne">
-		UPDATE adm_account SET
-		<if test="entity.operatorId > 0">operator_id=#{entity.operatorId},</if>
+		UPDATE adm_config SET
 		<if test="entity.code != null and entity.code != ''">code=#{entity.code},</if>
 		<if test="entity.name != null and entity.name != ''">name=#{entity.name},</if>
 		<if test="entity.status != null">status=#{entity.status},</if>
-		<if test="entity.imageUrl != null and entity.imageUrl">image_url=#{entity.imageUrl},</if>
+		<if test="entity.multiValue != null">multi_value=#{entity.multiValue},</if>
 		<if test="entity.remarks != null and entity.remarks != ''">remarks=#{entity.remarks},</if>
-			update_time=now()
+			operator_id=#{entity.operatorId}, value=#{entity.value}, update_time=now()
 		WHERE id=#{entity.id} AND tenant_id=#{entity.tenantId}
 	</update>
 
 	<delete id="deleteOne">
-		DELETE FROM adm_account WHERE id=#{id} AND tenant_id=#{tenantId}
+		DELETE FROM adm_config WHERE id=#{id} AND tenant_id=#{tenantId}
 	</delete>
 
 	<delete id="deleteList">
-		DELETE FROM adm_account
+		DELETE FROM adm_config
 		<where>
 			<foreach collection="idList" item="item" open="id in (" separator="," close=")">
 				#{item}
@@ -28,43 +27,35 @@
 		</where>
 	</delete>
 
-	<select id="selectOne" resultMap="accountMap">
-		SELECT * FROM adm_account WHERE id=#{id} AND tenant_id=#{tenantId}
+	<select id="selectOne" resultMap="configMap">
+		SELECT * FROM adm_config WHERE id=#{id} AND tenant_id=#{tenantId}
 	</select>
 
-	<select id="selectList" resultMap="accountMap">
-		SELECT * FROM adm_account
-		<where>
-			<foreach collection="idList" item="item" open="id in (" separator="," close=")">
-				#{item}
-			</foreach>
-			AND tenant_id=#{tenantId}
-		</where>
+	<select id="selectList" resultMap="configMap">
+		SELECT * FROM adm_config
+		WHERE tenant_id=#{tenantId}
+		<foreach collection="idList" item="item" open="AND id IN (" separator="," close=")">
+			#{item}
+		</foreach>
 	</select>
 
 	<select id="countPage" resultType="_int">
-		SELECT COUNT(*) FROM adm_account e
-		<include refid="pageJoin" />
+		SELECT COUNT(*) FROM adm_config e
 		<where>
 			<include refid="pageCond" />
 		</where>
 	</select>
 
-	<sql id="pageJoin">
-		<if test="search.tenantId > 0">
-			INNER JOIN adm_account_tenant et ON e.id=et.account_id
-		</if>
-	</sql>
-
 	<sql id="pageCond">
-		<if test="search.tenantId > 0">
-			AND et.tenant_id = #{search.tenantId}
-		</if>
+		AND e.tenant_id = #{search.tenantId}
 		<if test="search.operatorId > 0">
 			AND e.operator_id = #{search.operatorId}
 		</if>
 		<if test="search.status != null">
 			AND e.status = #{search.status}
+		</if>
+		<if test="search.multiValue != null">
+			AND e.multi_value = #{search.multiValue}
 		</if>
 		<if test="search.code != null and !search.code.isEmpty()">
 			AND e.code LIKE CONCAT('%', #{search.code}, '%')
@@ -79,9 +70,8 @@
 		</if>
 	</sql>
 
-	<select id="listPage" resultMap="accountMap">
-		SELECT e.* FROM adm_account e
-		<include refid="pageJoin" />
+	<select id="listPage" resultMap="configMap">
+		SELECT e.* FROM adm_config e
 		<where>
 			<include refid="pageCond" />
 		</where>
@@ -89,14 +79,14 @@
 		LIMIT #{pageable.size} OFFSET #{pageable.offset}
 	</select>
 
-	<resultMap id="accountMap" type="io.jutil.coreservice.admin.entity.Account">
+	<resultMap id="configMap" type="io.jutil.coreservice.admin.entity.Config">
 		<id property="id" column="id" />
 		<result property="tenantId" column="tenant_id" />
 		<result property="operatorId" column="operator_id" />
 		<result property="code" column="code" />
 		<result property="name" column="name" />
+		<result property="value" column="value" />
 		<result property="status" column="status" />
-		<result property="imageUrl" column="image_url" />
 		<result property="remarks" column="remarks" />
 		<result property="createTime" column="create_time" />
 		<result property="updateTime" column="update_time" />

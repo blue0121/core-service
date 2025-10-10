@@ -42,7 +42,7 @@ public class TenantRepository {
 		if (count == 0) {
 			return null;
 		}
-		auditLogRepository.addOperation(AuditLogFacade.Business.TENANT, Const.DEFAULT_TENANT_ID,
+		auditLogRepository.addOperation(AuditLogFacade.Business.TENANT, Const.PLATFORM_TENANT_ID,
 				entity.getId(), entity.getOperatorId(), entity);
 		return this.getOne(entity.getId());
 	}
@@ -52,7 +52,7 @@ public class TenantRepository {
 		if (count == 0) {
 			return null;
 		}
-		auditLogRepository.updateOperation(AuditLogFacade.Business.TENANT, Const.DEFAULT_TENANT_ID,
+		auditLogRepository.updateOperation(AuditLogFacade.Business.TENANT, Const.PLATFORM_TENANT_ID,
 				entity.getId(), entity.getOperatorId(), entity);
 		return this.getOne(entity.getId());
 	}
@@ -70,7 +70,7 @@ public class TenantRepository {
 		if (count == 0) {
 			return 0;
 		}
-		auditLogRepository.deleteOperation(AuditLogFacade.Business.TENANT, Const.DEFAULT_TENANT_ID,
+		auditLogRepository.deleteOperation(AuditLogFacade.Business.TENANT, Const.PLATFORM_TENANT_ID,
 				id, operatorId);
 		return count;
 	}
@@ -80,7 +80,7 @@ public class TenantRepository {
 		if (count == 0) {
 			return 0;
 		}
-		auditLogRepository.deleteListOperation(AuditLogFacade.Business.TENANT, Const.DEFAULT_TENANT_ID,
+		auditLogRepository.deleteListOperation(AuditLogFacade.Business.TENANT, Const.PLATFORM_TENANT_ID,
 				idList, operatorId);
 		return count;
 	}

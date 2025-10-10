@@ -1,5 +1,6 @@
 package io.jutil.coreservice.core.model;
 
+import io.jutil.springeasy.core.validation.ValidationUtil;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
@@ -31,5 +32,9 @@ public class DeleteListTenantAuditRequest {
 		request.idList = idList;
 		request.operatorId = operatorId;
 		return request;
+	}
+
+	public void check() {
+		ValidationUtil.valid(this);
 	}
 }

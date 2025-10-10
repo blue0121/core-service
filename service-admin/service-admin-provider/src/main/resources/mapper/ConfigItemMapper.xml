@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.jutil.coreservice.admin.dao.ConfigItemMapper">
+
+	<update id="updateOne">
+		UPDATE adm_config_item SET
+		<if test="entity.value != null and entity.value != ''">value=#{entity.value},</if>
+		<if test="entity.name != null and entity.name != ''">name=#{entity.name},</if>
+		<if test="entity.status != null">status=#{entity.status},</if>
+		<if test="entity.remarks != null and entity.remarks != ''">remarks=#{entity.remarks},</if>
+			operator_id=#{entity.operatorId}, update_time=now()
+		WHERE id=#{entity.id} AND tenant_id=#{entity.tenantId}
+	</update>
+
+	<delete id="deleteOne">
+		DELETE FROM adm_config_item WHERE id=#{id} AND tenant_id=#{tenantId}
+	</delete>
+
+	<delete id="deleteList">
+		DELETE FROM adm_config_item
+		WHERE tenant_id=#{tenantId}
+		<foreach collection="idList" item="item" open="AND id in (" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<delete id="deleteByConfigId">
+		DELETE FROM adm_config_item WHERE tenant_id=#{tenantId} AND config_id=#{configId}
+	</delete>
+
+	<delete id="deleteByConfigIdList">
+		DELETE FROM adm_config_item
+		WHERE tenant_id=#{tenantId}
+		<foreach collection="configIdList" item="item" open="AND config_id in (" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<select id="selectOne" resultMap="configItemMap">
+		SELECT * FROM adm_config_item WHERE tenant_id=#{tenantId} AND id=#{id}
+	</select>
+
+	<select id="listByConfigId" resultMap="configItemMap">
+		SELECT * FROM adm_config_item
+		WHERE tenant_id=#{tenantId} AND config_id=#{configId}
+	</select>
+
+	<select id="listByConfigIdList" resultMap="configItemMap">
+		SELECT * FROM adm_config_item
+		WHERE tenant_id=#{tenantId}
+		<foreach collection="configIdList" item="item" open="AND config_id in (" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<resultMap id="configItemMap" type="io.jutil.coreservice.admin.entity.ConfigItem">
+		<id property="id" column="id" />
+		<result property="tenantId" column="tenant_id" />
+		<result property="configId" column="config_id" />
+		<result property="operatorId" column="operator_id" />
+		<result property="value" column="value" />
+		<result property="name" column="name" />
+		<result property="status" column="status" />
+		<result property="remarks" column="remarks" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+
+</mapper>

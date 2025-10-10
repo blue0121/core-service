@@ -55,8 +55,10 @@ public class AccountRepository {
 		if (count == 0) {
 			return null;
 		}
-		accountTenantMapper.deleteByAccountId(entity.getId());
-		accountTenantMapper.insert(entity.getId(), entity.getTenantIdList());
+		if (entity.getTenantIdList() != null && !entity.getTenantIdList().isEmpty()) {
+			accountTenantMapper.deleteByAccountId(entity.getId());
+			accountTenantMapper.insert(entity.getId(), entity.getTenantIdList());
+		}
 		auditLogRepository.updateOperation(AuditLogFacade.Business.ACCOUNT, entity.getTenantId(),
 				entity.getId(), entity.getOperatorId(), entity);
 		return this.getOne(entity.getTenantId(), entity.getId());

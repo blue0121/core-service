@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.jutil.coreservice.admin.dao.ConfigItemMapper">
+
+	<insert id="insertOne">
+		INSERT IGNORE INTO adm_config_item (id, tenant_id, config_id, operator_id, name, value, status,
+			remarks, create_time, update_time)
+		VALUES (#{entity.id}, #{entity.tenantId}, #{entity.configId}, #{entity.operatorId},
+			#{entity.name}, #{entity.value}, #{entity.status}, #{entity.remarks},
+			now(), now())
+	</insert>
+
+</mapper>

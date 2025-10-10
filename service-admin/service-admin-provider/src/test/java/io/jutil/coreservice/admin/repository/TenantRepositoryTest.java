@@ -46,10 +46,10 @@ public abstract class TenantRepositoryTest {
 		TenantTest.verify(view, 1L, "code", "name", 0,
 				"remarks");
 
-		var logList = auditLogRepositoryTest.list(Const.DEFAULT_TENANT_ID, entity.getId(),
+		var logList = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, entity.getId(),
 				AuditLogFacade.Business.TENANT);
 		Assertions.assertEquals(1, logList.size());
-		AuditLogTest.verify(logList.getFirst(), Const.DEFAULT_TENANT_ID, entity.getId(), 1L,
+		AuditLogTest.verify(logList.getFirst(), Const.PLATFORM_TENANT_ID, entity.getId(), 1L,
 				1, JSONObject.from(entity));
 	}
 
@@ -68,15 +68,15 @@ public abstract class TenantRepositoryTest {
 		TenantTest.verify(view2, 1L, "code2", "name", 0,
 				"remarks");
 
-		var logList = auditLogRepositoryTest.list(Const.DEFAULT_TENANT_ID, entity.getId(),
+		var logList = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, entity.getId(),
 				AuditLogFacade.Business.TENANT);
 		Assertions.assertEquals(2, logList.size());
 		for (var log : logList) {
 			if (log.getOperation() == Operation.ADD) {
-				AuditLogTest.verify(log, Const.DEFAULT_TENANT_ID, entity.getId(), 1L,
+				AuditLogTest.verify(log, Const.PLATFORM_TENANT_ID, entity.getId(), 1L,
 						1, JSONObject.from(entity));
 			} else {
-				AuditLogTest.verify(log, Const.DEFAULT_TENANT_ID, entity.getId(), 1L,
+				AuditLogTest.verify(log, Const.PLATFORM_TENANT_ID, entity.getId(), 1L,
 						2, JSONObject.from(entity2));
 			}
 		}
@@ -92,15 +92,15 @@ public abstract class TenantRepositoryTest {
 
 		Assertions.assertEquals(1, repository.deleteOne(view.getId(), 1L));
 
-		var logList = auditLogRepositoryTest.list(Const.DEFAULT_TENANT_ID, entity.getId(),
+		var logList = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, entity.getId(),
 				AuditLogFacade.Business.TENANT);
 		Assertions.assertEquals(2, logList.size());
 		for (var log : logList) {
 			if (log.getOperation() == Operation.ADD) {
-				AuditLogTest.verify(log, Const.DEFAULT_TENANT_ID, entity.getId(), 1L,
+				AuditLogTest.verify(log, Const.PLATFORM_TENANT_ID, entity.getId(), 1L,
 						1, JSONObject.from(entity));
 			} else {
-				AuditLogTest.verify(log, Const.DEFAULT_TENANT_ID, entity.getId(), 1L,
+				AuditLogTest.verify(log, Const.PLATFORM_TENANT_ID, entity.getId(), 1L,
 						3, JSONObject.of("id", entity.getId()));
 			}
 		}
@@ -134,20 +134,20 @@ public abstract class TenantRepositoryTest {
 		Assertions.assertEquals(2,
 				repository.deleteList(List.of(entity.getId(), entity2.getId()), 2L));
 
-		var logList = auditLogRepositoryTest.list(Const.DEFAULT_TENANT_ID, entity.getId(),
+		var logList = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, entity.getId(),
 				AuditLogFacade.Business.TENANT, Operation.ADD);
 		Assertions.assertEquals(1, logList.size());
-		AuditLogTest.verify(logList.getFirst(), Const.DEFAULT_TENANT_ID, entity.getId(),
+		AuditLogTest.verify(logList.getFirst(), Const.PLATFORM_TENANT_ID, entity.getId(),
 				1L,1, JSONObject.from(entity));
 
-		logList = auditLogRepositoryTest.list(Const.DEFAULT_TENANT_ID, entity.getId(),
+		logList = auditLogRepositoryTest.list(Const.PLATFORM_TENANT_ID, entity.getId(),
 				AuditLogFacade.Business.TENANT, Operation.DELETE);
 		for (var log : logList) {
 			if (log.getBusinessId() == entity.getId()) {
-				AuditLogTest.verify(log, Const.DEFAULT_TENANT_ID, entity.getId(),
+				AuditLogTest.verify(log, Const.PLATFORM_TENANT_ID, entity.getId(),
 						2L,3, JSONObject.of("id", log.getBusinessId()));
 			} else {
-				AuditLogTest.verify(log, Const.DEFAULT_TENANT_ID, entity2.getId(),
+				AuditLogTest.verify(log, Const.PLATFORM_TENANT_ID, entity2.getId(),
 						2L,3, JSONObject.of("id", log.getBusinessId()));
 			}
 		}

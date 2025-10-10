@@ -16,6 +16,8 @@ public interface AuditLogFacade {
 	enum Business {
 		TENANT("adm_tenant"),
 		ACCOUNT("adm_account"),
+		CONFIG("adm_config"),
+		CONFIG_ITEM("adm_config_item"),
 		;
 		private final String label;
 

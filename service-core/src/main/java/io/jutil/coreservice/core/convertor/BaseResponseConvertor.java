@@ -54,7 +54,7 @@ public class BaseResponseConvertor {
 	}
 
 	public static <E, R> List<R> toListResponse(List<E> entityList, Function<E, R> f) {
-		var responseList = new ArrayList<R>();
+		List<R> responseList = new ArrayList<>();
 		if (entityList == null || entityList.isEmpty()) {
 			return responseList;
 		}
@@ -68,7 +68,7 @@ public class BaseResponseConvertor {
 	}
 
 	public static <E, R> Map<Long, R> toMapResponse(Map<Long, E> entityMap, Function<E, R> f) {
-		var responseMap = new HashMap<Long, R>();
+		Map<Long, R> responseMap = new HashMap<>();
 		if (entityMap == null || entityMap.isEmpty()) {
 			return responseMap;
 		}
@@ -77,6 +77,18 @@ public class BaseResponseConvertor {
 			if (response != null) {
 				responseMap.put(entry.getKey(), response);
 			}
+		}
+		return responseMap;
+	}
+
+	public static <E, R> Map<Long, List<R>> toMapListResponse(Map<Long, List<E>> entityMap, Function<E, R> f) {
+		Map<Long, List<R>> responseMap = new HashMap<>();
+		if (entityMap == null || entityMap.isEmpty()) {
+			return responseMap;
+		}
+		for (var entry : entityMap.entrySet()) {
+			var responseList = toListResponse(entry.getValue(), f);
+			responseMap.put(entry.getKey(), responseList);
 		}
 		return responseMap;
 	}

@@ -1,11 +1,11 @@
 package io.jutil.coreservice.admin.provider;
 
-import io.jutil.coreservice.admin.covertor.AccountConvertor;
-import io.jutil.coreservice.admin.facade.AccountFacade;
-import io.jutil.coreservice.admin.model.AccountRequest;
-import io.jutil.coreservice.admin.model.AccountResponse;
-import io.jutil.coreservice.admin.model.AccountSearchRequest;
-import io.jutil.coreservice.admin.service.AccountService;
+import io.jutil.coreservice.admin.covertor.ConfigConvertor;
+import io.jutil.coreservice.admin.facade.ConfigFacade;
+import io.jutil.coreservice.admin.model.ConfigRequest;
+import io.jutil.coreservice.admin.model.ConfigResponse;
+import io.jutil.coreservice.admin.model.ConfigSearchRequest;
+import io.jutil.coreservice.admin.service.ConfigService;
 import io.jutil.coreservice.core.entity.DeleteListTenantAuditEntity;
 import io.jutil.coreservice.core.entity.DeleteTenantAuditEntity;
 import io.jutil.coreservice.core.facade.AuditLogFacade;
@@ -26,78 +26,73 @@ import java.util.Map;
 
 /**
  * @author Jin Zheng
- * @since 2025-09-17
+ * @since 2025-10-09
  */
 @Component
-public class AccountProvider implements AccountFacade {
+public class ConfigProvider implements ConfigFacade {
 	@Autowired
 	AuditLogFacade auditLogFacade;
 
 	@Autowired
-	AccountService accountService;
+	ConfigService configService;
 
 	@Override
-	public AccountResponse getOne(long tenantId, long id) {
+	public ConfigResponse getOne(long tenantId, long id) {
 		AssertUtil.validId(tenantId, "租户ID");
 		AssertUtil.validId(id, "ID");
-		var entity = accountService.getOne(tenantId, id);
-		return AccountConvertor.toResponse(entity);
+		var entity = configService.getOne(tenantId, id);
+		return ConfigConvertor.toResponse(entity);
 	}
 
 	@Override
-	public Map<Long, AccountResponse> getList(long tenantId, Collection<Long> idList) {
+	public Map<Long, ConfigResponse> getList(long tenantId, Collection<Long> idList) {
 		AssertUtil.validId(tenantId, "租户ID");
 		AssertUtil.validIdList(idList, "ID列表");
-		var map = accountService.getList(tenantId, idList);
-		return AccountConvertor.toMapResponse(map);
+		var map = configService.getList(tenantId, idList);
+		return ConfigConvertor.toMapResponse(map);
 	}
 
 	@Override
-	public AccountResponse addOne(AccountRequest request) {
+	public ConfigResponse addOne(ConfigRequest request) {
 		request.check(AddOperation.class);
-		var entity = AccountConvertor.toEntity(request);
-		entity = accountService.addOne(entity);
+		var entity = ConfigConvertor.toEntity(request);
+		entity = configService.addOne(entity);
 		if (entity == null) {
 			throw BaseErrorCode.EXISTS.newException(request.getCode());
 		}
 
-		return AccountConvertor.toResponse(entity);
+		return ConfigConvertor.toResponse(entity);
 	}
 
 	@Override
-	public AccountResponse updateOne(AccountRequest request) {
+	public ConfigResponse updateOne(ConfigRequest request) {
 		request.check(UpdateOperation.class);
-		var entity = AccountConvertor.toEntity(request);
-		entity = accountService.updateOne(entity);
-		return AccountConvertor.toResponse(entity);
+		var entity = ConfigConvertor.toEntity(request);
+		entity = configService.updateOne(entity);
+		return ConfigConvertor.toResponse(entity);
 	}
 
 	@Override
 	public int deleteOne(DeleteTenantAuditRequest request) {
 		request.check();
 		var entity = DeleteTenantAuditEntity.from(request);
-		return accountService.deleteOne(entity);
+		return configService.deleteOne(entity);
 	}
 
 	@Override
 	public int deleteList(DeleteListTenantAuditRequest request) {
 		request.check();
 		var entity = DeleteListTenantAuditEntity.from(request);
-		return accountService.deleteList(entity);
+		return configService.deleteList(entity);
 	}
 
 	@Override
-	public PageResponse search(AccountSearchRequest searchRequest) {
+	public PageResponse search(ConfigSearchRequest searchRequest) {
 		ValidationUtil.valid(searchRequest);
-		return this.listAll(searchRequest);
-	}
-
-	@Override
-	public PageResponse listAll(AccountSearchRequest searchRequest) {
-		var search = AccountConvertor.toSearch(searchRequest);
+		var search = ConfigConvertor.toSearch(searchRequest);
 		var page = searchRequest.toPage();
-		page = accountService.search(search, page);
-		return AccountConvertor.toPageResponse(page);
+		page = configService.search(search, page);
+		return ConfigConvertor.toPageResponse(page);
 	}
 
 	@Override
